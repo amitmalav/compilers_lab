@@ -1,0 +1,37 @@
+INT: int
+IDENTIFIER: foo
+lparen: (
+INT: int
+IDENTIFIER: a
+comma: ,
+FLOAT: float
+IDENTIFIER: b
+rparen: )
+lflowerbrac: {
+
+INT: int
+IDENTIFIER: c
+assign: =
+INT_CONSTANT: 0
+semi-colon: ;
+
+IF: if
+lparen: (
+not: !
+IDENTIFIER: a
+AND_OPERATOR: &&
+IDENTIFIER: b
+rparen: )
+lflowerbrac: {
+
+IDENTIFIER: c
+INC_OPERATOR: ++
+semi-colon: ;
+
+rflowerbrac: }
+
+RETURN: return
+IDENTIFIER: c
+semi-colon: ;
+
+rflowerbrac: }

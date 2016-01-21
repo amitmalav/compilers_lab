@@ -1,0 +1,18 @@
+enum Tokens{
+	VOID=0x100,
+	INT,
+	FLOAT,
+	RETURN,
+	INT_CONSTANT,
+	OR_OP,
+	AND_OP,
+	EQ_OP,
+	NE_OP,
+	LE_OP,
+	GE_OP,
+	INC_OP,
+	IF,
+	WHILE,
+	FOR,
+	IDENTIFIER
+};
