@@ -6,4 +6,6 @@ lex.cc: lexa.l
 	# cond_remove_scannerh
 	flexc++ lexa.l; 
 	sed -i '/int lex()/r enum' Scanner.h
+clean:
+	rm junk lex.cc Scanner.h Scanner.ih Scannerbase.h
 

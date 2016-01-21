@@ -15,6 +15,12 @@ assign: =
 INT_CONSTANT: 0
 semi-colon: ;
 
+FLOAT: float
+IDENTIFIER: d
+assign: =
+FLOAT_CONSTANT: 13.15625
+semi-colon: ;
+
 IF: if
 lparen: (
 not: !
@@ -29,6 +35,40 @@ INC_OPERATOR: ++
 semi-colon: ;
 
 rflowerbrac: }
+
+ELSE: else
+lflowerbrac: {
+
+IDENTIFIER: c
+minus: -
+minus: -
+semi-colon: ;
+
+rflowerbrac: }
+
+FOR: for
+lparen: (
+semi-colon: ;
+semi-colon: ;
+rparen: )
+lflowerbrac: {
+IF: if
+lparen: (
+IDENTIFIER: a
+LESS_OR_EQ_OPERATOR: <=
+IDENTIFIER: b
+rparen: )
+IDENTIFIER: c
+INC_OPERATOR: ++
+semi-colon: ;
+rflowerbrac: }
+semi-colon: ;
+
+IDENTIFIER: printf
+lparen: (
+STRING_LITERAL: "abclkafn\n"
+rparen: )
+semi-colon: ;
 
 RETURN: return
 IDENTIFIER: c

@@ -4,6 +4,8 @@ enum Tokens{
 	FLOAT,
 	RETURN,
 	INT_CONSTANT,
+	FLOAT_CONSTANT,
+	STRING_LITERAL,
 	OR_OP,
 	AND_OP,
 	EQ_OP,
@@ -12,7 +14,9 @@ enum Tokens{
 	GE_OP,
 	INC_OP,
 	IF,
+	ELSE,
 	WHILE,
 	FOR,
-	IDENTIFIER
+	IDENTIFIER,
+	OTHER
 };

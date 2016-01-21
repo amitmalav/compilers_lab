@@ -22,6 +22,12 @@ int main() {
 		case Scanner::INT_CONSTANT:
 			cout << "INT_CONSTANT: " << text << '\n';
 			break;
+		case Scanner::FLOAT_CONSTANT:
+			cout << "FLOAT_CONSTANT: " << text << '\n';
+			break;
+		case Scanner::STRING_LITERAL:
+			cout << "STRING_LITERAL: " << text << '\n';
+			break;
 		case Scanner::OR_OP:
             cout << "OR_OPERATOR: " << text << '\n';
 			break;
@@ -45,6 +51,9 @@ int main() {
 			break;
 		case Scanner::IF:
             cout << "IF: " << text << '\n';
+			break;
+		case Scanner::ELSE:
+            cout << "ELSE: " << text << '\n';
 			break;
 		case Scanner::WHILE:
             cout << "WHILE: " << text << '\n';
@@ -103,6 +112,8 @@ int main() {
 		case '>':
 			cout << "greater_than: " << text << '\n';
 			break;
+		default:
+		  	cout << "char. token: `" << text << "'\n";
 		}
 	}
 }
