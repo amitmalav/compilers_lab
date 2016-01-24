@@ -449,7 +449,7 @@ primary_expression:
 				}
 
 
-				INT_CONSTANT{
+				|INT_CONSTANT{
 					$$ = ++nodeCount;
 					std::cout << $$ << "[label=\"primary_expression\"]\n";
 					std::cout << $$ << " -> " << ++nodeCount << "\n";
