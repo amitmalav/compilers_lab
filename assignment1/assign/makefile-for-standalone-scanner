@@ -2,9 +2,9 @@ all:    lex.cc  main.cc
 	g++ --std=c++0x lex.cc main.cc
 	./a.out<test>junk
 
-lex.cc: lexa.l 
+lex.cc: lex.l 
 	# cond_remove_scannerh
-	flexc++ lexa.l; 
+	flexc++ lex.l; 
 	sed -i '/int lex()/r enum' Scanner.h
 clean:
 	rm junk lex.cc Scanner.h Scanner.ih Scannerbase.h

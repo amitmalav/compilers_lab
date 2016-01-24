@@ -1,0 +1,107 @@
+digraph G {ordering=out;
+
+1[label="type_specifier"]
+1 -> 2
+2[label="INT"]
+3[label="fun_declarator"]
+3 -> 4
+4[label="IDENTIFIER"]
+3 -> 5
+5[label="("]
+3 -> 6
+6[label=")"]
+7[label="type_specifier"]
+7 -> 8
+8[label="INT"]
+9[label="declarator"]
+9 -> 10
+10[label="IDENTIFIER"]
+11[label="declarator_list"]
+11 -> 9
+12[label="declarator"]
+12 -> 13
+13[label="IDENTIFIER"]
+14[label="declarator_list"]
+14 -> 11
+14 -> 15
+15[label=","]
+14 -> 12
+16[label="declarator"]
+16 -> 17
+17[label="IDENTIFIER"]
+18[label="declarator_list"]
+18 -> 14
+18 -> 19
+19[label=","]
+18 -> 16
+20[label="declaration"]
+20 -> 7
+20 -> 18
+20 -> 21
+21[label=";"]
+22[label="declaration_list"]
+22 -> 20
+23[label="l_expression"]
+23 -> 24
+24[label="IDENTIFIER"]
+25[label="l_expression"]
+25 -> 26
+26[label="IDENTIFIER"]
+27[label="primary_expression"]
+27 -> 25
+28[label="postfix_expression"]
+28 -> 27
+29[label="unary_expression"]
+29 -> 28
+30[label="multiplicative_expression"]
+30 -> 29
+31[label="additive_expression"]
+31 -> 30
+32[label="l_expression"]
+32 -> 33
+33[label="IDENTIFIER"]
+34[label="primary_expression"]
+34 -> 32
+35[label="postfix_expression"]
+35 -> 34
+36[label="unary_expression"]
+36 -> 35
+37[label="multiplicative_expression"]
+37 -> 36
+38[label="additive_expression"]
+38 -> 31
+38 -> 39
+39[label="+"]
+38 -> 37
+40[label="relational_expression"]
+40 -> 38
+41[label="equality_expression"]
+41 -> 40
+42[label="logical_and_expression"]
+42 -> 41
+43[label="expression"]
+43 -> 42
+44[label="assignment_statement"]
+44 -> 23
+44 -> 45
+45[label="="]
+44 -> 43
+44 -> 46
+46[label=";"]
+47[label="statement"]
+47 -> 44
+48[label="statement_list"]
+48 -> 47
+49[label="compound_statement"]
+49 -> 50
+50[label="{"]
+49 -> 22
+49 -> 48
+49 -> 51
+51[label="}"]
+52[label="function_definition"]
+52 -> 1
+52 -> 3
+52 -> 49
+53[label="translation_unit"]
+53 -> 52}
