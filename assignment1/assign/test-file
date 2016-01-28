@@ -1,5 +1,6 @@
 int main(int a){
 	a = 5;
+	a = a-1;
 	for (z = 54; z<100; z = z + 1){
 		z = z + 10;
 	}
