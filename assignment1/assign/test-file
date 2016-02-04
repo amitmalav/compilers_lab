@@ -1,22 +1,4 @@
-int main(int a){
-	a = 5;
-	a = a-1;
-	for (z = 54; z<100; z = z + 1){
-		z = z + 10;
-	}
-	if (a == 45){
-		return 56;
-	}
-	else return 10;
-}
-
-void foo(int a){
-	a = 5;
-	for (z = 54; z<100; z = z + 1){
-		z = z + 10;
-	}
-	if (a == 45){
-		return 56;
-	}
-	else return 10;
+int main() {
+    int a, b, c;
+    a = b + c;
 }

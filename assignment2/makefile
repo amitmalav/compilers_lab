@@ -1,28 +1,24 @@
-all:    Parser.ih Parser.h Parserbase.h parse.cc Scanner.ih Scanner.h Scannerbase.h lex.cc  main.cc
-	g++   --std=c++0x lex.cc parse.cc main.cc -o parser;
-	##echo "digraph G {ordering=out;\n\n""`./parser < test-file`""}" > graph.dot
-	##dot -Tpdf graph.dot -o graph.pdf
-#	ps2pdf graph.ps
-#	egrep 'nextToken|reduce' junk
+all:    Scanner.ih Scanner.h Scannerbase.h lex.cc parse.cc main.cc Parser.h Parserbase.h Parser.ih
+	g++   --std=c++0x lex.cc parse.cc main.cc -o parser
+	parser < test.c > junk
+
         
-Parser.ih: parse.y 
-	if [ ! -e Parser.ih ]; then \
-		bisonc++ --construction -V parse.y && sed -i '/#include/a int nodeCount = 0;' Parser.ih; \
+Scanner.ih: lex.l
+	if [ ! -e Scanner.ih ]; then \
+		flexc++ lex.l;\
+                sed -i '/include/a #include "Parserbase.h"' Scanner.ih; \
 	fi
 
-Parser.h Parserbase.h parse.cc:  parse.y
-	bisonc++ --construction -V parse.y;
+parse.cc Parser.h Parserbase.h Parser.ih: parse.y
+	bisonc++  --construction parse.y; 
+	sed -i '/insert preincludes/a #include "ast.h"' Parserbase.h;
+	sed -i '\|STYPE__     d_val__;| d' Parserbase.h;
+	sed -i '\|typedef Meta__::SType STYPE__;| a \\tpublic: static STYPE__  d_val__; ' Parserbase.h;
+	sed -i '/include "Parser.ih"/a #include "ast.cpp"' parse.cc;
+	sed -i '\|void Parser::print__()| i Meta__::SType ParserBase::d_val__; ' parse.cc
 
-Scanner.ih: lex.l Parserbase.h
-	flexc++ lex.l;
-	sed -i '/include/a #include "Parserbase.h"' Scanner.ih;
-
-Scanner.h Scannerbase.h lex.cc: lex.l
-	flexc++ lex.l; 
 
 .PHONY: clean     
 clean:
 	$(RM) Parser.ih Parser.h Parserbase.h parse.cc Scanner.ih Scanner.h Scannerbase.h lex.cc a.out graph.ps junk *~
 
-distclean: clean
-	$(RM) graph.dot graph.pdf parse.y.output parser

@@ -1,6 +1,7 @@
 // There may be some flexer directives here
 exponent-part								([eE][+-][0-9]*)|([eE][0-9]*)
-floating-point-constant						[+-]?([0-9]+\.[0-9]*{exponent-part}?)|([0-9]*\.[0-9]+{exponent-part}?)z
+floating-point-constant						[+]?([0-9]+\.[0-9]*{exponent-part}?)
+integer-constant							([[:digit:]]+)|(0[xX]*[0-9a-fA-F]+)
 %%
 [ \t\n]+                                    //skip
 \"([^\\]|([\\][tn\"\\]))*\"				return Parser::STRING_LITERAL;
@@ -19,7 +20,7 @@ if 										return Parser::IF;
 else									return Parser::ELSE;
 while 									return Parser::WHILE;
 for										return Parser::FOR;
-(-?)[[:digit:]]+ 						return Parser::INT_CONSTANT;
+{integer-constant}						return Parser::INT_CONSTANT;
 {floating-point-constant}				return Parser::FLOAT_CONSTANT;
 "("                                     return '(';
 ")"                                     return ')';
@@ -37,5 +38,5 @@ for										return Parser::FOR;
 "*"                                     return '*';
 "/"                                     return '/';
 "!"                                     return '!';
-[[:alpha:]][[:alnum:]]*					return Parser::IDENTIFIER;
+[[:alpha:]_][[:alpha:][:digit:]_]*				return Parser::IDENTIFIER;
 .										return Parser::OTHER;

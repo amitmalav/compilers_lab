@@ -1,0 +1,185 @@
+digraph G {ordering=out;
+
+1[label="type_specifier"]
+1 -> 2
+2[label="INT"]
+3[label="fun_declarator"]
+3 -> 4
+4[label="IDENTIFIER"]
+3 -> 5
+5[label="("]
+3 -> 6
+6[label=")"]
+7[label="type_specifier"]
+7 -> 8
+8[label="INT"]
+9[label="declarator"]
+9 -> 10
+10[label="IDENTIFIER"]
+11[label="declarator_list"]
+11 -> 9
+12[label="declarator"]
+12 -> 13
+13[label="IDENTIFIER"]
+14[label="declarator_list"]
+14 -> 11
+14 -> 15
+15[label=","]
+14 -> 12
+16[label="declarator"]
+16 -> 17
+17[label="IDENTIFIER"]
+18[label="declarator_list"]
+18 -> 14
+18 -> 19
+19[label=","]
+18 -> 16
+20[label="declarator"]
+20 -> 21
+21[label="IDENTIFIER"]
+22[label="declarator_list"]
+22 -> 18
+22 -> 23
+23[label=","]
+22 -> 20
+24[label="declarator"]
+24 -> 25
+25[label="IDENTIFIER"]
+26[label="declarator_list"]
+26 -> 22
+26 -> 27
+27[label=","]
+26 -> 24
+28[label="declarator"]
+28 -> 29
+29[label="IDENTIFIER"]
+30[label="declarator_list"]
+30 -> 26
+30 -> 31
+31[label=","]
+30 -> 28
+32[label="declarator"]
+32 -> 33
+33[label="IDENTIFIER"]
+34[label="declarator_list"]
+34 -> 30
+34 -> 35
+35[label=","]
+34 -> 32
+36[label="declarator"]
+36 -> 37
+37[label="IDENTIFIER"]
+38[label="declarator_list"]
+38 -> 34
+38 -> 39
+39[label=","]
+38 -> 36
+40[label="declaration"]
+40 -> 7
+40 -> 38
+40 -> 41
+41[label=";"]
+42[label="declaration_list"]
+42 -> 40
+43[label="type_specifier"]
+43 -> 44
+44[label="INT"]
+45[label="declarator"]
+45 -> 46
+46[label="IDENTIFIER"]
+47[label="declarator_list"]
+47 -> 45
+48[label="declarator"]
+48 -> 49
+49[label="IDENTIFIER"]
+50[label="declarator_list"]
+50 -> 47
+50 -> 51
+51[label=","]
+50 -> 48
+52[label="declaration"]
+52 -> 43
+52 -> 50
+52 -> 53
+53[label=";"]
+54[label="declaration_list"]
+54 -> 42
+54 -> 52
+55[label="type_specifier"]
+55 -> 56
+56[label="INT"]
+57[label="declarator"]
+57 -> 58
+58[label="IDENTIFIER"]
+59[label="constant_expression"]
+59 -> 60
+60[label="INT_CONSTANT"]
+61[label="declarator"]
+61 -> 57
+61 -> 62
+62[label="["]
+61 -> 59
+61 -> 63
+63[label="]"]
+64[label="constant_expression"]
+64 -> 65
+65[label="INT_CONSTANT"]
+66[label="declarator"]
+66 -> 61
+66 -> 67
+67[label="["]
+66 -> 64
+66 -> 68
+68[label="]"]
+69[label="declarator_list"]
+69 -> 66
+70[label="declaration"]
+70 -> 55
+70 -> 69
+70 -> 71
+71[label=";"]
+72[label="declaration_list"]
+72 -> 54
+72 -> 70
+73[label="l_expression"]
+73 -> 74
+74[label="IDENTIFIER"]
+75[label="primary_expression"]
+75 -> 73
+76[label="postfix_expression"]
+76 -> 75
+77[label="unary_expression"]
+77 -> 76
+78[label="multiplicative_expression"]
+78 -> 77
+79[label="additive_expression"]
+79 -> 78
+80[label="relational_expression"]
+80 -> 79
+81[label="equality_expression"]
+81 -> 80
+82[label="logical_and_expression"]
+82 -> 81
+83[label="expression"]
+83 -> 82
+84[label="statement"]
+84 -> 85
+85[label="RETURN"]
+84 -> 83
+84 -> 86
+86[label=";"]
+87[label="statement_list"]
+87 -> 84
+88[label="compound_statement"]
+88 -> 89
+89[label="{"]
+88 -> 72
+88 -> 87
+88 -> 90
+90[label="}"]
+91[label="function_definition"]
+91 -> 1
+91 -> 3
+91 -> 88
+92[label="translation_unit"]
+92 -> 91}
