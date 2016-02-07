@@ -1,6 +1,7 @@
 // There may be some flexer directives here
 exponent-part								([eE][+-][0-9]*)|([eE][0-9]*)
-floating-point-constant						[+-]?([0-9]+\.[0-9]*{exponent-part}?)|([0-9]*\.[0-9]+{exponent-part}?)z
+floating-point-constant						[+]?([0-9]+\.[0-9]*{exponent-part}?)
+integer-constant							([[:digit:]]+)|(0[xX]*[0-9a-fA-F]+)
 %%
 [ \t\n]+                                    //skip
 \"([^\\]|([\\][tn\"\\]))*\"				{Parser::d_val__ = std::string(matched());return Parser::STRING_LITERAL;}
@@ -21,22 +22,8 @@ if 										return Parser::IF;
 else									return Parser::ELSE;
 while 									return Parser::WHILE;
 for										return Parser::FOR;
-(-?)[[:digit:]]+ 						{
-											istringstream sstr(matched());
-											int val;
-											sstr >> val;
-											Parser::d_val__ = val;
-											return Parser::INT_CONSTANT;
-										}
-
-{floating-point-constant}				{
-											istringstream sstr(matched());
-											float val;
-											sstr >> val;
-											Parser::d_val__ = val;
-											return Parser::FLOAT_CONSTANT;
-										}
-
+{integer-constant}						{Parser::d_val__ = std::string(matched());return Parser::INT_CONSTANT;}
+{floating-point-constant}				{Parser::d_val__ = std::string(matched());return Parser::FLOAT_CONSTANT;}
 "("                                     return '(';
 ")"                                     return ')';
 ","                                     return ',';
@@ -53,5 +40,6 @@ for										return Parser::FOR;
 "*"                                     return '*';
 "/"                                     return '/';
 "!"                                     return '!';
-[[:alpha:]][[:alnum:]]*					{Parser::d_val__ = std::string(matched());return Parser::IDENTIFIER;}
+"."										return '.';
+[[:alpha:]_][[:alpha:][:digit:]_]*		{Parser::d_val__ = std::string(matched());return Parser::IDENTIFIER;}
 .										return Parser::OTHER;

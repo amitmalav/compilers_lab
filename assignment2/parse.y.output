@@ -1,4 +1,4 @@
-[[parse.y (info)] Line 179: 
+[[parse.y (info)] Line 332: 
 Production Rules
 (rule precedences determined from %prec or 1st terminal between parentheses):
 1: translation_unit ->  struct_specifier
@@ -133,33 +133,33 @@ Symbolic Terminal tokens:
 FIRST sets:
    translation_unit: { STRUCT VOID INT FLOAT }
    struct_specifier: { STRUCT }
-   function_definition: { STRUCT VOID INT FLOAT }
    declaration_list: { STRUCT VOID INT FLOAT }
+   function_definition: { STRUCT VOID INT FLOAT }
    type_specifier: { STRUCT VOID INT FLOAT }
    fun_declarator: { IDENTIFIER }
-   compound_statement: { '{' }
    base_type: { STRUCT VOID INT FLOAT }
    parameter_list: { STRUCT VOID INT FLOAT }
    parameter_declaration: { STRUCT VOID INT FLOAT }
    declarator: { IDENTIFIER }
    constant_expression: { INT_CONSTANT FLOAT_CONSTANT }
+   compound_statement: { '{' }
    statement_list: { RETURN IF WHILE FOR IDENTIFIER '{' ';' '*' '&' }
    statement: { RETURN IF WHILE FOR IDENTIFIER '{' ';' '*' '&' }
+   assignment_statement: { IDENTIFIER ';' '*' '&' }
+   expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '*' '(' '-' '&' }
+   logical_and_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '*' '(' '-' '&' }
+   equality_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '*' '(' '-' '&' }
+   relational_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '*' '(' '-' '&' }
+   additive_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '*' '(' '-' '&' }
+   multiplicative_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '*' '(' '-' '&' }
+   unary_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '*' '(' '-' '&' }
+   postfix_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '*' '(' '&' }
+   primary_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '*' '(' '&' }
+   l_expression: { IDENTIFIER '*' '&' }
+   expression_list: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '*' '(' '-' '&' }
+   unary_operator: { '!' '-' }
    selection_statement: { IF }
    iteration_statement: { WHILE FOR }
-   assignment_statement: { IDENTIFIER ';' '*' '&' }
-   expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '*' '(' '-' '&' '!' }
-   l_expression: { IDENTIFIER '*' '&' }
-   logical_and_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '*' '(' '-' '&' '!' }
-   equality_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '*' '(' '-' '&' '!' }
-   relational_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '*' '(' '-' '&' '!' }
-   additive_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '*' '(' '-' '&' '!' }
-   multiplicative_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '*' '(' '-' '&' '!' }
-   unary_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '*' '(' '-' '&' '!' }
-   postfix_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '*' '(' '&' }
-   unary_operator: { '-' '!' }
-   primary_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '*' '(' '&' }
-   expression_list: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '*' '(' '-' '&' '!' }
    declaration: { STRUCT VOID INT FLOAT }
    declarator_list: { IDENTIFIER }
    translation_unit_$: { STRUCT VOID INT FLOAT }
@@ -168,23 +168,20 @@ FIRST sets:
 FOLLOW sets:
    translation_unit: { STRUCT VOID INT FLOAT <EOF> }
    struct_specifier: { STRUCT VOID INT FLOAT <EOF> }
-   function_definition: { STRUCT VOID INT FLOAT <EOF> }
    declaration_list: { RETURN STRUCT VOID INT FLOAT IF WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }
+   function_definition: { STRUCT VOID INT FLOAT <EOF> }
    type_specifier: { IDENTIFIER '*' }
    fun_declarator: { '{' }
-   compound_statement: { STRUCT VOID INT FLOAT <EOF> }
    base_type: { IDENTIFIER '*' }
    parameter_list: { ')' ',' }
    parameter_declaration: { ')' ',' }
    declarator: { ';' ')' ',' '[' }
    constant_expression: { ']' }
+   compound_statement: { STRUCT VOID INT FLOAT <EOF> }
    statement_list: { RETURN IF WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }
    statement: { RETURN IF ELSE WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }
-   selection_statement: { RETURN IF ELSE WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }
-   iteration_statement: { RETURN IF ELSE WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }
    assignment_statement: { RETURN IF ELSE WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }
    expression: { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }
-   l_expression: { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }
    logical_and_expression: { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }
    equality_expression: { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }
    relational_expression: { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }
@@ -192,9 +189,12 @@ FOLLOW sets:
    multiplicative_expression: { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }
    unary_expression: { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }
    postfix_expression: { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }
-   unary_operator: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '*' '(' '&' }
    primary_expression: { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }
+   l_expression: { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }
    expression_list: { ')' ',' }
+   unary_operator: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '*' '(' '&' }
+   selection_statement: { RETURN IF ELSE WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }
+   iteration_statement: { RETURN IF ELSE WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }
    declaration: { RETURN STRUCT VOID INT FLOAT IF WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }
    declarator_list: { ';' ',' }
    translation_unit_$: { <EOF> }
@@ -407,12 +407,12 @@ State 18:
 17: [P33 0] assignment_statement ->  . l_expression '=' expression ';'   { RETURN IF WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, (20 21 22 23 24 25 ) 15
 18: [P7 0] type_specifier ->  . base_type   { IDENTIFIER '*' }  0, (26 27 28 29 ) 16
 19: [P8 0] type_specifier ->  . type_specifier '*'   { IDENTIFIER '*' }  0, (18 19 ) 10
-20: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '[' '=' '.' }  0, () 17
-21: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '[' '=' '.' }  0, (20 21 22 23 24 25 ) 15
-22: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '[' '=' '.' }  0, () 18
-23: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '[' '=' '.' }  0, () 19
-24: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (20 21 22 23 24 25 ) 15
-25: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (20 21 22 23 24 25 ) 15
+20: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '=' '[' '.' }  0, () 17
+21: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '=' '[' '.' }  0, (20 21 22 23 24 25 ) 15
+22: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '=' '[' '.' }  0, () 18
+23: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '=' '[' '.' }  0, () 19
+24: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (20 21 22 23 24 25 ) 15
+25: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (20 21 22 23 24 25 ) 15
 26: [P9 0] base_type ->  . VOID   { IDENTIFIER '*' }  0, () 20
 27: [P10 0] base_type ->  . INT   { IDENTIFIER '*' }  0, () 21
 28: [P11 0] base_type ->  . FLOAT   { IDENTIFIER '*' }  0, () 22
@@ -527,12 +527,12 @@ State 25:
 9: [P76 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { RETURN IF WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, () 9
 10: [P32 0] assignment_statement ->  . ';'   { RETURN IF WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, () 10
 11: [P33 0] assignment_statement ->  . l_expression '=' expression ';'   { RETURN IF WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, (12 13 14 15 16 17 ) 11
-12: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '[' '=' '.' }  0, () 12
-13: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '[' '=' '.' }  0, (12 13 14 15 16 17 ) 11
-14: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '[' '=' '.' }  0, () 13
-15: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '[' '=' '.' }  0, () 14
-16: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (12 13 14 15 16 17 ) 11
-17: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (12 13 14 15 16 17 ) 11
+12: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '=' '[' '.' }  0, () 12
+13: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '=' '[' '.' }  0, (12 13 14 15 16 17 ) 11
+14: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '=' '[' '.' }  0, () 13
+15: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '=' '[' '.' }  0, () 14
+16: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (12 13 14 15 16 17 ) 11
+17: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (12 13 14 15 16 17 ) 11
   0:   On '}' to state 51 with (0 )
   1:   On statement to state 52 with (1 )
   2:   On '{' to state 28 with (2 )
@@ -572,12 +572,12 @@ State 26:
 18: [P10 0] base_type ->  . INT   { IDENTIFIER '*' }  0, () 16
 19: [P11 0] base_type ->  . FLOAT   { IDENTIFIER '*' }  0, () 17
 20: [P12 0] base_type ->  . STRUCT IDENTIFIER   { IDENTIFIER '*' }  0, () 18
-21: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '[' '=' '.' }  0, () 19
-22: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '[' '=' '.' }  0, (21 22 23 24 25 26 ) 14
-23: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '[' '=' '.' }  0, () 20
-24: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '[' '=' '.' }  0, () 21
-25: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (21 22 23 24 25 26 ) 14
-26: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (21 22 23 24 25 26 ) 14
+21: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '=' '[' '.' }  0, () 19
+22: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '=' '[' '.' }  0, (21 22 23 24 25 26 ) 14
+23: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '=' '[' '.' }  0, () 20
+24: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '=' '[' '.' }  0, () 21
+25: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (21 22 23 24 25 26 ) 14
+26: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (21 22 23 24 25 26 ) 14
   0:   On statement_list to state 53 with (0 3 )
   1:   On declaration to state 46 with (1 )
   2:   On statement to state 27 with (2 )
@@ -621,12 +621,12 @@ State 28:
 10: [P76 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { RETURN IF WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, () 9
 11: [P32 0] assignment_statement ->  . ';'   { RETURN IF WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, () 10
 12: [P33 0] assignment_statement ->  . l_expression '=' expression ';'   { RETURN IF WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, (13 14 15 16 17 18 ) 11
-13: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '[' '=' '.' }  0, () 12
-14: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '[' '=' '.' }  0, (13 14 15 16 17 18 ) 11
-15: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '[' '=' '.' }  0, () 13
-16: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '[' '=' '.' }  0, () 14
-17: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (13 14 15 16 17 18 ) 11
-18: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (13 14 15 16 17 18 ) 11
+13: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '=' '[' '.' }  0, () 12
+14: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '=' '[' '.' }  0, (13 14 15 16 17 18 ) 11
+15: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '=' '[' '.' }  0, () 13
+16: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '=' '[' '.' }  0, () 14
+17: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (13 14 15 16 17 18 ) 11
+18: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (13 14 15 16 17 18 ) 11
   0:   On statement_list to state 54 with (0 2 )
   1:   On statement to state 27 with (1 )
   2:   On '{' to state 28 with (3 )
@@ -693,12 +693,12 @@ State 32:
 30: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' '<' '>' '+' '-' '/' }  0, () 15
 31: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' '<' '>' '+' '-' '/' }  0, () 16
 32: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' '<' '>' '+' '-' '/' }  0, () 17
-33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 10
-34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 18
-36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 19
-37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 10
+34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 18
+36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 19
+37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
   0:   On expression to state 55 with (0 2 )
   1:   On logical_and_expression to state 56 with (1 4 )
   2:   On equality_expression to state 57 with (3 6 7 )
@@ -743,9 +743,9 @@ State 36:
 
 State 37:
 0: [P33 1] assignment_statement -> l_expression  . '=' expression ';'   { RETURN IF ELSE WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, () 0
-1: [P65 1] l_expression -> l_expression  . '[' expression ']'   { PTR_OP '[' '=' '.' }  0, () 1
-2: [P68 1] l_expression -> l_expression  . '.' IDENTIFIER   { PTR_OP '[' '=' '.' }  0, () 2
-3: [P69 1] l_expression -> l_expression  . PTR_OP IDENTIFIER   { PTR_OP '[' '=' '.' }  0, () 3
+1: [P65 1] l_expression -> l_expression  . '[' expression ']'   { PTR_OP '=' '[' '.' }  0, () 1
+2: [P68 1] l_expression -> l_expression  . '.' IDENTIFIER   { PTR_OP '=' '[' '.' }  0, () 2
+3: [P69 1] l_expression -> l_expression  . PTR_OP IDENTIFIER   { PTR_OP '=' '[' '.' }  0, () 3
   0:   On '=' to state 76 with (0 )
   1:   On '[' to state 77 with (1 )
   2:   On '.' to state 78 with (2 )
@@ -753,18 +753,18 @@ State 37:
 
 
 State 38:
-0: [P64 1] l_expression -> IDENTIFIER  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  1, () -1
+0: [P64 1] l_expression -> IDENTIFIER  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  1, () -1
   Reduce item(s): 0 
 
 
 State 39:
-0: [P66 1] l_expression -> '*'  . l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (1 2 3 4 5 6 ) 0
-1: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 1
-2: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (1 2 3 4 5 6 ) 0
-3: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 2
-4: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 3
-5: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (1 2 3 4 5 6 ) 0
-6: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (1 2 3 4 5 6 ) 0
+0: [P66 1] l_expression -> '*'  . l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (1 2 3 4 5 6 ) 0
+1: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 1
+2: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (1 2 3 4 5 6 ) 0
+3: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 2
+4: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 3
+5: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (1 2 3 4 5 6 ) 0
+6: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (1 2 3 4 5 6 ) 0
   0:   On l_expression to state 80 with (0 2 5 6 )
   1:   On IDENTIFIER to state 38 with (1 )
   2:   On '*' to state 39 with (3 )
@@ -772,13 +772,13 @@ State 39:
 
 
 State 40:
-0: [P67 1] l_expression -> '&'  . l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (1 2 3 4 5 6 ) 0
-1: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 1
-2: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (1 2 3 4 5 6 ) 0
-3: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 2
-4: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 3
-5: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (1 2 3 4 5 6 ) 0
-6: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (1 2 3 4 5 6 ) 0
+0: [P67 1] l_expression -> '&'  . l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (1 2 3 4 5 6 ) 0
+1: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 1
+2: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (1 2 3 4 5 6 ) 0
+3: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 2
+4: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 3
+5: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (1 2 3 4 5 6 ) 0
+6: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (1 2 3 4 5 6 ) 0
   0:   On l_expression to state 81 with (0 2 5 6 )
   1:   On IDENTIFIER to state 38 with (1 )
   2:   On '*' to state 39 with (3 )
@@ -869,12 +869,12 @@ State 53:
 9: [P76 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { RETURN IF WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, () 9
 10: [P32 0] assignment_statement ->  . ';'   { RETURN IF WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, () 10
 11: [P33 0] assignment_statement ->  . l_expression '=' expression ';'   { RETURN IF WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, (12 13 14 15 16 17 ) 11
-12: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '[' '=' '.' }  0, () 12
-13: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '[' '=' '.' }  0, (12 13 14 15 16 17 ) 11
-14: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '[' '=' '.' }  0, () 13
-15: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '[' '=' '.' }  0, () 14
-16: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (12 13 14 15 16 17 ) 11
-17: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (12 13 14 15 16 17 ) 11
+12: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '=' '[' '.' }  0, () 12
+13: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '=' '[' '.' }  0, (12 13 14 15 16 17 ) 11
+14: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '=' '[' '.' }  0, () 13
+15: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '=' '[' '.' }  0, () 14
+16: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (12 13 14 15 16 17 ) 11
+17: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (12 13 14 15 16 17 ) 11
   0:   On '}' to state 89 with (0 )
   1:   On statement to state 52 with (1 )
   2:   On '{' to state 28 with (2 )
@@ -905,12 +905,12 @@ State 54:
 9: [P76 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { RETURN IF WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, () 9
 10: [P32 0] assignment_statement ->  . ';'   { RETURN IF WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, () 10
 11: [P33 0] assignment_statement ->  . l_expression '=' expression ';'   { RETURN IF WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, (12 13 14 15 16 17 ) 11
-12: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '[' '=' '.' }  0, () 12
-13: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '[' '=' '.' }  0, (12 13 14 15 16 17 ) 11
-14: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '[' '=' '.' }  0, () 13
-15: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '[' '=' '.' }  0, () 14
-16: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (12 13 14 15 16 17 ) 11
-17: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (12 13 14 15 16 17 ) 11
+12: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '=' '[' '.' }  0, () 12
+13: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '=' '[' '.' }  0, (12 13 14 15 16 17 ) 11
+14: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '=' '[' '.' }  0, () 13
+15: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '=' '[' '.' }  0, () 14
+16: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (12 13 14 15 16 17 ) 11
+17: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (12 13 14 15 16 17 ) 11
   0:   On '}' to state 90 with (0 )
   1:   On statement to state 52 with (1 )
   2:   On '{' to state 28 with (2 )
@@ -1026,12 +1026,12 @@ State 63:
 8: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 5
 9: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 6
 10: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 7
-11: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 2
-12: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (11 12 13 14 15 16 ) 3
-13: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 8
-14: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 9
-15: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (11 12 13 14 15 16 ) 3
-16: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (11 12 13 14 15 16 ) 3
+11: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 2
+12: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (11 12 13 14 15 16 ) 3
+13: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 8
+14: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 9
+15: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (11 12 13 14 15 16 ) 3
+16: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (11 12 13 14 15 16 ) 3
   0:   On postfix_expression to state 104 with (0 )
   1:   On primary_expression to state 64 with (1 )
   2:   On IDENTIFIER to state 65 with (2 3 11 )
@@ -1052,7 +1052,7 @@ State 64:
 State 65:
 0: [P55 1] postfix_expression -> IDENTIFIER  . '(' ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 0
 1: [P56 1] postfix_expression -> IDENTIFIER  . '(' expression_list ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 0
-2: [P64 1] l_expression -> IDENTIFIER  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  1, () -1
+2: [P64 1] l_expression -> IDENTIFIER  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  1, () -1
   0:   On '(' to state 105 with (0 1 )
   Reduce item(s): 2 
 
@@ -1061,9 +1061,9 @@ State 66:
 0: [P57 1] postfix_expression -> l_expression  . INC_OP   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 0
 1: [P58 1] primary_expression -> l_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  1, () -1
 2: [P59 1] primary_expression -> l_expression  . '=' expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 1
-3: [P65 1] l_expression -> l_expression  . '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 2
-4: [P68 1] l_expression -> l_expression  . '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 3
-5: [P69 1] l_expression -> l_expression  . PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 4
+3: [P65 1] l_expression -> l_expression  . '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 2
+4: [P68 1] l_expression -> l_expression  . '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 3
+5: [P69 1] l_expression -> l_expression  . PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 4
   0:   On INC_OP to state 106 with (0 )
   1:   On '=' to state 107 with (2 )
   2:   On '[' to state 77 with (3 )
@@ -1131,12 +1131,12 @@ State 72:
 30: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' '<' '>' '+' '-' '/' }  0, () 15
 31: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' '<' '>' '+' '-' '/' }  0, () 16
 32: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' '<' '>' '+' '-' '/' }  0, () 17
-33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 10
-34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 18
-36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 19
-37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 10
+34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 18
+36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 19
+37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
   0:   On expression to state 108 with (0 2 )
   1:   On logical_and_expression to state 56 with (1 4 )
   2:   On equality_expression to state 57 with (3 6 7 )
@@ -1193,12 +1193,12 @@ State 73:
 30: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' '<' '>' '+' '-' '/' }  0, () 15
 31: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' '<' '>' '+' '-' '/' }  0, () 16
 32: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' '<' '>' '+' '-' '/' }  0, () 17
-33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 10
-34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 18
-36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 19
-37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 10
+34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 18
+36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 19
+37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
   0:   On expression to state 109 with (0 2 )
   1:   On logical_and_expression to state 56 with (1 4 )
   2:   On equality_expression to state 57 with (3 6 7 )
@@ -1255,12 +1255,12 @@ State 74:
 30: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' '<' '>' '+' '-' '/' }  0, () 15
 31: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' '<' '>' '+' '-' '/' }  0, () 16
 32: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' '<' '>' '+' '-' '/' }  0, () 17
-33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 10
-34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 18
-36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 19
-37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 10
+34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 18
+36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 19
+37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
   0:   On expression to state 110 with (0 2 )
   1:   On logical_and_expression to state 56 with (1 4 )
   2:   On equality_expression to state 57 with (3 6 7 )
@@ -1317,12 +1317,12 @@ State 75:
 30: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' '<' '>' '+' '-' '/' }  0, () 15
 31: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' '<' '>' '+' '-' '/' }  0, () 16
 32: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' '<' '>' '+' '-' '/' }  0, () 17
-33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 10
-34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 18
-36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 19
-37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 10
+34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 18
+36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 19
+37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
   0:   On expression to state 111 with (0 2 )
   1:   On logical_and_expression to state 56 with (1 4 )
   2:   On equality_expression to state 57 with (3 6 7 )
@@ -1379,12 +1379,12 @@ State 76:
 30: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' '<' '>' '+' '-' '/' }  0, () 15
 31: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' '<' '>' '+' '-' '/' }  0, () 16
 32: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' '<' '>' '+' '-' '/' }  0, () 17
-33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 10
-34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 18
-36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 19
-37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 10
+34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 18
+36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 19
+37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
   0:   On expression to state 112 with (0 2 )
   1:   On logical_and_expression to state 56 with (1 4 )
   2:   On equality_expression to state 57 with (3 6 7 )
@@ -1408,7 +1408,7 @@ State 76:
 
 
 State 77:
-0: [P65 2] l_expression -> l_expression '['  . expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (1 2 ) 0
+0: [P65 2] l_expression -> l_expression '['  . expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (1 2 ) 0
 1: [P34 0] expression ->  . logical_and_expression   { OR_OP ']' }  0, (3 4 ) 1
 2: [P35 0] expression ->  . expression OR_OP logical_and_expression   { OR_OP ']' }  0, (1 2 ) 0
 3: [P36 0] logical_and_expression ->  . equality_expression   { OR_OP AND_OP ']' }  0, (5 6 7 ) 2
@@ -1441,12 +1441,12 @@ State 77:
 30: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ']' '<' '>' '+' '-' '/' }  0, () 15
 31: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ']' '<' '>' '+' '-' '/' }  0, () 16
 32: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ']' '<' '>' '+' '-' '/' }  0, () 17
-33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 10
-34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 18
-36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 19
-37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 10
+34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 18
+36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 19
+37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
   0:   On expression to state 113 with (0 2 )
   1:   On logical_and_expression to state 56 with (1 4 )
   2:   On equality_expression to state 57 with (3 6 7 )
@@ -1470,20 +1470,20 @@ State 77:
 
 
 State 78:
-0: [P68 2] l_expression -> l_expression '.'  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 0
+0: [P68 2] l_expression -> l_expression '.'  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 0
   0:   On IDENTIFIER to state 114 with (0 )
 
 
 State 79:
-0: [P69 2] l_expression -> l_expression PTR_OP  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 0
+0: [P69 2] l_expression -> l_expression PTR_OP  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 0
   0:   On IDENTIFIER to state 115 with (0 )
 
 
 State 80:
-0: [P66 2] l_expression -> '*' l_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP ';' '*' ')' ',' ']' '=' '<' '>' '+' '-' '/' }  1, () -1
-1: [P65 1] l_expression -> l_expression  . '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 0
-2: [P68 1] l_expression -> l_expression  . '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 1
-3: [P69 1] l_expression -> l_expression  . PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 2
+0: [P66 2] l_expression -> '*' l_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP ';' '*' ')' ',' '=' ']' '<' '>' '+' '-' '/' }  1, () -1
+1: [P65 1] l_expression -> l_expression  . '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 0
+2: [P68 1] l_expression -> l_expression  . '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 1
+3: [P69 1] l_expression -> l_expression  . PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 2
   0:   On '[' to state 77 with (1 )
   1:   On '.' to state 78 with (2 )
   2:   On PTR_OP to state 79 with (3 )
@@ -1497,10 +1497,10 @@ Solved SR CONFLICT on PTR_OP:
 
 
 State 81:
-0: [P67 2] l_expression -> '&' l_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP ';' '*' ')' ',' ']' '=' '<' '>' '+' '-' '/' }  1, () -1
-1: [P65 1] l_expression -> l_expression  . '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 0
-2: [P68 1] l_expression -> l_expression  . '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 1
-3: [P69 1] l_expression -> l_expression  . PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 2
+0: [P67 2] l_expression -> '&' l_expression  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP ';' '*' ')' ',' '=' ']' '<' '>' '+' '-' '/' }  1, () -1
+1: [P65 1] l_expression -> l_expression  . '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 0
+2: [P68 1] l_expression -> l_expression  . '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 1
+3: [P69 1] l_expression -> l_expression  . PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 2
   0:   On '[' to state 77 with (1 )
   1:   On '.' to state 78 with (2 )
   2:   On PTR_OP to state 79 with (3 )
@@ -1617,12 +1617,12 @@ State 92:
 28: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 14
 29: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 15
 30: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 16
-31: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 9
-32: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (31 32 33 34 35 36 ) 10
-33: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 17
-34: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 18
-35: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (31 32 33 34 35 36 ) 10
-36: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (31 32 33 34 35 36 ) 10
+31: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 9
+32: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (31 32 33 34 35 36 ) 10
+33: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 17
+34: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 18
+35: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (31 32 33 34 35 36 ) 10
+36: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (31 32 33 34 35 36 ) 10
   0:   On logical_and_expression to state 121 with (0 2 )
   1:   On equality_expression to state 57 with (1 4 5 )
   2:   On relational_expression to state 58 with (3 7 8 9 10 )
@@ -1674,12 +1674,12 @@ State 93:
 26: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 13
 27: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 14
 28: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 15
-29: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 8
-30: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (29 30 31 32 33 34 ) 9
-31: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 16
-32: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 17
-33: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (29 30 31 32 33 34 ) 9
-34: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (29 30 31 32 33 34 ) 9
+29: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 8
+30: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (29 30 31 32 33 34 ) 9
+31: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 16
+32: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 17
+33: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (29 30 31 32 33 34 ) 9
+34: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (29 30 31 32 33 34 ) 9
   0:   On equality_expression to state 122 with (0 2 3 )
   1:   On relational_expression to state 58 with (1 5 6 7 8 )
   2:   On additive_expression to state 59 with (4 10 11 )
@@ -1727,12 +1727,12 @@ State 94:
 23: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 12
 24: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 13
 25: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 14
-26: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 7
-27: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (26 27 28 29 30 31 ) 8
-28: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 15
-29: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 16
-30: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (26 27 28 29 30 31 ) 8
-31: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (26 27 28 29 30 31 ) 8
+26: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 7
+27: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (26 27 28 29 30 31 ) 8
+28: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 15
+29: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 16
+30: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (26 27 28 29 30 31 ) 8
+31: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (26 27 28 29 30 31 ) 8
   0:   On relational_expression to state 123 with (0 2 3 4 5 )
   1:   On additive_expression to state 59 with (1 7 8 )
   2:   On multiplicative_expression to state 60 with (6 10 11 )
@@ -1779,12 +1779,12 @@ State 95:
 23: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 12
 24: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 13
 25: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 14
-26: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 7
-27: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (26 27 28 29 30 31 ) 8
-28: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 15
-29: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 16
-30: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (26 27 28 29 30 31 ) 8
-31: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (26 27 28 29 30 31 ) 8
+26: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 7
+27: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (26 27 28 29 30 31 ) 8
+28: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 15
+29: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 16
+30: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (26 27 28 29 30 31 ) 8
+31: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (26 27 28 29 30 31 ) 8
   0:   On relational_expression to state 124 with (0 2 3 4 5 )
   1:   On additive_expression to state 59 with (1 7 8 )
   2:   On multiplicative_expression to state 60 with (6 10 11 )
@@ -1826,12 +1826,12 @@ State 96:
 18: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 11
 19: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 12
 20: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 13
-21: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 6
-22: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
-23: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 14
-24: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 15
-25: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
-26: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
+21: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 6
+22: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
+23: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 14
+24: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 15
+25: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
+26: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
   0:   On additive_expression to state 125 with (0 2 3 )
   1:   On multiplicative_expression to state 60 with (1 5 6 )
   2:   On unary_expression to state 61 with (4 )
@@ -1872,12 +1872,12 @@ State 97:
 18: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 11
 19: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 12
 20: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 13
-21: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 6
-22: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
-23: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 14
-24: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 15
-25: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
-26: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
+21: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 6
+22: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
+23: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 14
+24: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 15
+25: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
+26: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
   0:   On additive_expression to state 126 with (0 2 3 )
   1:   On multiplicative_expression to state 60 with (1 5 6 )
   2:   On unary_expression to state 61 with (4 )
@@ -1918,12 +1918,12 @@ State 98:
 18: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 11
 19: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 12
 20: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 13
-21: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 6
-22: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
-23: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 14
-24: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 15
-25: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
-26: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
+21: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 6
+22: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
+23: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 14
+24: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 15
+25: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
+26: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
   0:   On additive_expression to state 127 with (0 2 3 )
   1:   On multiplicative_expression to state 60 with (1 5 6 )
   2:   On unary_expression to state 61 with (4 )
@@ -1964,12 +1964,12 @@ State 99:
 18: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 11
 19: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 12
 20: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 13
-21: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 6
-22: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
-23: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 14
-24: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 15
-25: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
-26: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
+21: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 6
+22: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
+23: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 14
+24: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 15
+25: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
+26: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (21 22 23 24 25 26 ) 7
   0:   On additive_expression to state 128 with (0 2 3 )
   1:   On multiplicative_expression to state 60 with (1 5 6 )
   2:   On unary_expression to state 61 with (4 )
@@ -2007,12 +2007,12 @@ State 100:
 15: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 10
 16: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 11
 17: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 12
-18: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 5
-19: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (18 19 20 21 22 23 ) 6
-20: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 13
-21: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 14
-22: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (18 19 20 21 22 23 ) 6
-23: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (18 19 20 21 22 23 ) 6
+18: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 5
+19: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (18 19 20 21 22 23 ) 6
+20: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 13
+21: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 14
+22: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (18 19 20 21 22 23 ) 6
+23: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (18 19 20 21 22 23 ) 6
   0:   On multiplicative_expression to state 129 with (0 2 3 )
   1:   On unary_expression to state 61 with (1 )
   2:   On postfix_expression to state 62 with (4 )
@@ -2049,12 +2049,12 @@ State 101:
 15: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 10
 16: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 11
 17: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 12
-18: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 5
-19: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (18 19 20 21 22 23 ) 6
-20: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 13
-21: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 14
-22: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (18 19 20 21 22 23 ) 6
-23: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (18 19 20 21 22 23 ) 6
+18: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 5
+19: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (18 19 20 21 22 23 ) 6
+20: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 13
+21: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 14
+22: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (18 19 20 21 22 23 ) 6
+23: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (18 19 20 21 22 23 ) 6
   0:   On multiplicative_expression to state 130 with (0 2 3 )
   1:   On unary_expression to state 61 with (1 )
   2:   On postfix_expression to state 62 with (4 )
@@ -2088,12 +2088,12 @@ State 102:
 12: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 9
 13: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 10
 14: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 11
-15: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 4
-16: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (15 16 17 18 19 20 ) 5
-17: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 12
-18: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 13
-19: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (15 16 17 18 19 20 ) 5
-20: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (15 16 17 18 19 20 ) 5
+15: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 4
+16: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (15 16 17 18 19 20 ) 5
+17: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 12
+18: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 13
+19: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (15 16 17 18 19 20 ) 5
+20: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (15 16 17 18 19 20 ) 5
   0:   On unary_expression to state 131 with (0 )
   1:   On postfix_expression to state 62 with (1 )
   2:   On unary_operator to state 63 with (2 )
@@ -2126,12 +2126,12 @@ State 103:
 12: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 9
 13: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 10
 14: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 11
-15: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 4
-16: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (15 16 17 18 19 20 ) 5
-17: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 12
-18: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 13
-19: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (15 16 17 18 19 20 ) 5
-20: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (15 16 17 18 19 20 ) 5
+15: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 4
+16: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (15 16 17 18 19 20 ) 5
+17: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 12
+18: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 13
+19: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (15 16 17 18 19 20 ) 5
+20: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (15 16 17 18 19 20 ) 5
   0:   On unary_expression to state 132 with (0 )
   1:   On postfix_expression to state 62 with (1 )
   2:   On unary_operator to state 63 with (2 )
@@ -2190,12 +2190,12 @@ State 105:
 33: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' ',' '<' '>' '+' '-' '/' }  0, () 17
 34: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' ',' '<' '>' '+' '-' '/' }  0, () 18
 35: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' ',' '<' '>' '+' '-' '/' }  0, () 19
-36: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 12
-37: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (36 37 38 39 40 41 ) 13
-38: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 20
-39: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 21
-40: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (36 37 38 39 40 41 ) 13
-41: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (36 37 38 39 40 41 ) 13
+36: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 12
+37: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (36 37 38 39 40 41 ) 13
+38: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 20
+39: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 21
+40: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (36 37 38 39 40 41 ) 13
+41: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (36 37 38 39 40 41 ) 13
   0:   On ')' to state 133 with (0 )
   1:   On expression_list to state 134 with (1 3 )
   2:   On expression to state 135 with (2 5 )
@@ -2259,12 +2259,12 @@ State 107:
 30: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 15
 31: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 16
 32: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' ')' ',' ']' '<' '>' '+' '-' '/' }  0, () 17
-33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 10
-34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 18
-36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 19
-37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 10
+34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 18
+36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 19
+37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
   0:   On expression to state 136 with (0 2 )
   1:   On logical_and_expression to state 56 with (1 4 )
   2:   On equality_expression to state 57 with (3 6 7 )
@@ -2323,19 +2323,19 @@ State 112:
 
 
 State 113:
-0: [P65 3] l_expression -> l_expression '[' expression  . ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 0
+0: [P65 3] l_expression -> l_expression '[' expression  . ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  0, () 0
 1: [P35 1] expression -> expression  . OR_OP logical_and_expression   { OR_OP ']' }  0, () 1
   0:   On ']' to state 142 with (0 )
   1:   On OR_OP to state 92 with (1 )
 
 
 State 114:
-0: [P68 3] l_expression -> l_expression '.' IDENTIFIER  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  1, () -1
+0: [P68 3] l_expression -> l_expression '.' IDENTIFIER  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  1, () -1
   Reduce item(s): 0 
 
 
 State 115:
-0: [P69 3] l_expression -> l_expression PTR_OP IDENTIFIER  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  1, () -1
+0: [P69 3] l_expression -> l_expression PTR_OP IDENTIFIER  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  1, () -1
   Reduce item(s): 0 
 
 
@@ -2563,12 +2563,12 @@ State 138:
 8: [P76 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { ELSE }  0, () 8
 9: [P32 0] assignment_statement ->  . ';'   { ELSE }  0, () 9
 10: [P33 0] assignment_statement ->  . l_expression '=' expression ';'   { ELSE }  0, (11 12 13 14 15 16 ) 10
-11: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '[' '=' '.' }  0, () 11
-12: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '[' '=' '.' }  0, (11 12 13 14 15 16 ) 10
-13: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '[' '=' '.' }  0, () 12
-14: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '[' '=' '.' }  0, () 13
-15: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (11 12 13 14 15 16 ) 10
-16: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (11 12 13 14 15 16 ) 10
+11: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '=' '[' '.' }  0, () 11
+12: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '=' '[' '.' }  0, (11 12 13 14 15 16 ) 10
+13: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '=' '[' '.' }  0, () 12
+14: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '=' '[' '.' }  0, () 13
+15: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (11 12 13 14 15 16 ) 10
+16: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (11 12 13 14 15 16 ) 10
   0:   On statement to state 146 with (0 )
   1:   On '{' to state 28 with (1 )
   2:   On selection_statement to state 29 with (2 )
@@ -2597,12 +2597,12 @@ State 139:
 8: [P76 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { RETURN IF ELSE WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, () 8
 9: [P32 0] assignment_statement ->  . ';'   { RETURN IF ELSE WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, () 9
 10: [P33 0] assignment_statement ->  . l_expression '=' expression ';'   { RETURN IF ELSE WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, (11 12 13 14 15 16 ) 10
-11: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '[' '=' '.' }  0, () 11
-12: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '[' '=' '.' }  0, (11 12 13 14 15 16 ) 10
-13: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '[' '=' '.' }  0, () 12
-14: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '[' '=' '.' }  0, () 13
-15: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (11 12 13 14 15 16 ) 10
-16: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (11 12 13 14 15 16 ) 10
+11: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '=' '[' '.' }  0, () 11
+12: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '=' '[' '.' }  0, (11 12 13 14 15 16 ) 10
+13: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '=' '[' '.' }  0, () 12
+14: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '=' '[' '.' }  0, () 13
+15: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (11 12 13 14 15 16 ) 10
+16: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (11 12 13 14 15 16 ) 10
   0:   On statement to state 147 with (0 )
   1:   On '{' to state 28 with (1 )
   2:   On selection_statement to state 29 with (2 )
@@ -2653,12 +2653,12 @@ State 140:
 30: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' '<' '>' '+' '-' '/' }  0, () 15
 31: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' '<' '>' '+' '-' '/' }  0, () 16
 32: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP ';' '*' '<' '>' '+' '-' '/' }  0, () 17
-33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 10
-34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 18
-36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 19
-37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 10
+34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 18
+36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 19
+37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
   0:   On expression to state 148 with (0 2 )
   1:   On logical_and_expression to state 56 with (1 4 )
   2:   On equality_expression to state 57 with (3 6 7 )
@@ -2687,7 +2687,7 @@ State 141:
 
 
 State 142:
-0: [P65 4] l_expression -> l_expression '[' expression ']'  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  1, () -1
+0: [P65 4] l_expression -> l_expression '[' expression ']'  .   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP ';' '*' ')' ',' '=' '[' ']' '<' '>' '+' '-' '/' '.' }  1, () -1
   Reduce item(s): 0 
 
 
@@ -2735,12 +2735,12 @@ State 145:
 30: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' ',' '<' '>' '+' '-' '/' }  0, () 15
 31: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' ',' '<' '>' '+' '-' '/' }  0, () 16
 32: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' ',' '<' '>' '+' '-' '/' }  0, () 17
-33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 10
-34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 18
-36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 19
-37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 10
+34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 18
+36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 19
+37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' ',' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
   0:   On expression to state 149 with (0 2 )
   1:   On logical_and_expression to state 56 with (1 4 )
   2:   On equality_expression to state 57 with (3 6 7 )
@@ -2799,12 +2799,12 @@ State 150:
 8: [P76 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { RETURN IF ELSE WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, () 8
 9: [P32 0] assignment_statement ->  . ';'   { RETURN IF ELSE WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, () 9
 10: [P33 0] assignment_statement ->  . l_expression '=' expression ';'   { RETURN IF ELSE WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, (11 12 13 14 15 16 ) 10
-11: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '[' '=' '.' }  0, () 11
-12: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '[' '=' '.' }  0, (11 12 13 14 15 16 ) 10
-13: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '[' '=' '.' }  0, () 12
-14: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '[' '=' '.' }  0, () 13
-15: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (11 12 13 14 15 16 ) 10
-16: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (11 12 13 14 15 16 ) 10
+11: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '=' '[' '.' }  0, () 11
+12: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '=' '[' '.' }  0, (11 12 13 14 15 16 ) 10
+13: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '=' '[' '.' }  0, () 12
+14: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '=' '[' '.' }  0, () 13
+15: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (11 12 13 14 15 16 ) 10
+16: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (11 12 13 14 15 16 ) 10
   0:   On statement to state 152 with (0 )
   1:   On '{' to state 28 with (1 )
   2:   On selection_statement to state 29 with (2 )
@@ -2855,12 +2855,12 @@ State 151:
 30: [P61 0] primary_expression ->  . FLOAT_CONSTANT   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' '<' '>' '+' '-' '/' }  0, () 15
 31: [P62 0] primary_expression ->  . STRING_LITERAL   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' '<' '>' '+' '-' '/' }  0, () 16
 32: [P63 0] primary_expression ->  . '(' expression ')'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP '*' ')' '<' '>' '+' '-' '/' }  0, () 17
-33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 10
-34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 18
-36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, () 19
-37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
-38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '[' '=' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+33: [P64 0] l_expression ->  . IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 10
+34: [P65 0] l_expression ->  . l_expression '[' expression ']'   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+35: [P66 0] l_expression ->  . '*' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 18
+36: [P67 0] l_expression ->  . '&' l_expression   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, () 19
+37: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
+38: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP '*' ')' '=' '[' '<' '>' '+' '-' '/' '.' }  0, (33 34 35 36 37 38 ) 11
   0:   On expression to state 153 with (0 2 )
   1:   On logical_and_expression to state 56 with (1 4 )
   2:   On equality_expression to state 57 with (3 6 7 )
@@ -2907,12 +2907,12 @@ State 154:
 8: [P76 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { RETURN IF ELSE WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, () 8
 9: [P32 0] assignment_statement ->  . ';'   { RETURN IF ELSE WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, () 9
 10: [P33 0] assignment_statement ->  . l_expression '=' expression ';'   { RETURN IF ELSE WHILE FOR IDENTIFIER '{' '}' ';' '*' '&' }  0, (11 12 13 14 15 16 ) 10
-11: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '[' '=' '.' }  0, () 11
-12: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '[' '=' '.' }  0, (11 12 13 14 15 16 ) 10
-13: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '[' '=' '.' }  0, () 12
-14: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '[' '=' '.' }  0, () 13
-15: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (11 12 13 14 15 16 ) 10
-16: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '[' '=' '.' }  0, (11 12 13 14 15 16 ) 10
+11: [P64 0] l_expression ->  . IDENTIFIER   { PTR_OP '=' '[' '.' }  0, () 11
+12: [P65 0] l_expression ->  . l_expression '[' expression ']'   { PTR_OP '=' '[' '.' }  0, (11 12 13 14 15 16 ) 10
+13: [P66 0] l_expression ->  . '*' l_expression   { PTR_OP '=' '[' '.' }  0, () 12
+14: [P67 0] l_expression ->  . '&' l_expression   { PTR_OP '=' '[' '.' }  0, () 13
+15: [P68 0] l_expression ->  . l_expression '.' IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (11 12 13 14 15 16 ) 10
+16: [P69 0] l_expression ->  . l_expression PTR_OP IDENTIFIER   { PTR_OP '=' '[' '.' }  0, (11 12 13 14 15 16 ) 10
   0:   On statement to state 155 with (0 )
   1:   On '{' to state 28 with (1 )
   2:   On selection_statement to state 29 with (2 )

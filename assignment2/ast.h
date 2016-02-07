@@ -1,23 +1,25 @@
 #include <iostream>
-#include <vector>
 
 enum opNameB{OR=1,
 			 AND=2,
 			 EQ_OP=3,
 			 NE_OP=4,
 			 LT=5,
-			 LE_OP=6,
-			 GE_OP=7,
-			 PLUS=8,
-			 MINUS=9,
-			 MULT=10,
-			 ASSIGN=11
+       GT = 6,
+			 LE_OP=7,
+			 GE_OP=8,
+			 PLUS=9,
+			 MINUS=10,
+			 MULT=11,
+			 ASSIGN=12,
+       PTR_OP = 13,
+       OBJ_OP = 17
 };
 
 
-enum opNameU{UMINUS=12,
-			 NOT=13,
-			 PP=14
+enum opNameU{UMINUS=14,
+			 NOT=15,
+			 PP=16
 };
 
 
@@ -45,10 +47,9 @@ class ExpAst: public abstract_astnode{
 public:
 	void print() = 0;
 };
-
-class RefAst: public abstract_astnode{
+class RefAst: public ExpAst{
 public:
-	void print() = 0;
+  void print() = 0;
 };
 
 
@@ -56,13 +57,13 @@ public:
 ////////////////////////////////////////////////////////
 
 
-class BlockStatement: public StmtAst{
+class BlockStmt: public StmtAst{
 public:
 	std::vector<StmtAst*> children;
 public:
   	void print();
-  	BlockStatement();
-  	BlockStatement(StmtAst*);
+  	BlockStmt();
+  	BlockStmt(StmtAst*);
 };
 
 
@@ -72,11 +73,13 @@ public:
 };
 
 class Seq: public StmtAst{
-	StmtAst*child;
+	std::vector<StmtAst*>children;
 public:
 	void print();
+  void insert_Seq(StmtAst*);
 	Seq();
 	Seq(StmtAst*);
+	Seq(std::vector<StmtAst*>);
 };
 
 class Ass: public StmtAst{
@@ -129,20 +132,23 @@ public:
 
 ////////////////////////////////////////////////////////
 
+
+
+
+
 class OpBinary: public ExpAst{
 	ExpAst*left,*right;
   	opNameB opName;
 public:
   	void print();
   	OpBinary();
-  	void setArguments(ExpAst*, ExpAst*);
   	OpBinary(ExpAst*, ExpAst*, opNameB);
   	OpBinary(opNameB);
 };
 
 class OpUnary: public ExpAst{
 	ExpAst* child;
-  	opNameU opName;
+  opNameU opName;
 public:
   	void print();
   	OpUnary();
@@ -161,19 +167,19 @@ public:
 };
 
 class FloatConst: public ExpAst{
-	float child;
+	std::string child;
 public:
   	void print();
   	FloatConst();
-  	FloatConst(float child);
+  	FloatConst(std::string child);
 };
 
 class IntConst: public ExpAst{
-	int child;
+	std::string child;
 public:
   	void print();
   	IntConst();
-  	IntConst(int child);
+  	IntConst(std::string child);
 };
 
 class StringConst: public ExpAst{
@@ -197,11 +203,12 @@ public:
 
 class ArrayRef: public RefAst{
 	Identifier*left;
-  	ExpAst*right;
+  std::vector <ExpAst*> right;
 public:
   	void print();
   	ArrayRef();
-  	ArrayRef(Identifier*left, ExpAst*right);
+  	ArrayRef(Identifier* left, std::vector <ExpAst*>right);
+  	ArrayRef(Identifier* left, ExpAst* right);
 };
 
 class Pointer: public RefAst{

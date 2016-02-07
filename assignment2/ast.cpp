@@ -1,5 +1,4 @@
 #include <iostream>
-#include "ast.h"
 #include <string>
 using namespace std;
 
@@ -10,25 +9,28 @@ string get_enum[] = {
 	"EQ_OP",
 	"NE_OP",
 	"LT",
+	"GT",
 	"LE_OP",
 	"GE_OP",
 	"PLUS",
 	"MINUS",
 	"MULT",
 	"ASSIGN",
+	"PTR_OP",
 	"UMINUS",
 	"NOT",
-	"PP"
+	"PP",
+	"OBJ_OP"
 };
 
 
 ////////////////////////////////////////////////////////
 
-BlockStatement::BlockStatement(){}
-BlockStatement::BlockStatement(StmtAst* c){
+BlockStmt::BlockStmt(){}
+BlockStmt::BlockStmt(StmtAst* c){
 	children.push_back(c);
 }
-void BlockStatement::print(){
+void BlockStmt::print(){
 	if (children.empty()) cout << "(Empty)";
 	cout << "(Block [";
 	for (int i = 0; i < children.size(); i++) {
@@ -46,12 +48,21 @@ void Empty::print(){
 //Seq
 
 Seq::Seq(){}
+Seq::Seq(std::vector<StmtAst*> c){
+	children = c;
+}
 Seq::Seq(StmtAst* c){
-	child = c;
+	children.push_back(c);
+}
+void Seq::insert_Seq(StmtAst* c){
+	children.push_back(c);
 }
 void Seq::print(){
 	cout << "(Seq ";
-	child -> print();
+	for (int i = 0; i < children.size(); i++) {
+		children.at(i)->print();
+		if (i < children.size() - 1) cout << " ";
+	}
 	cout << ")";
 }
 
@@ -152,10 +163,6 @@ OpBinary::OpBinary(){};
 OpBinary::OpBinary(opNameB op){
 	opName = op;
 }
-void OpBinary::setArguments(ExpAst* x, ExpAst *y){
-	left = x;
-	right = y;
-}
 OpBinary::OpBinary(ExpAst*x, ExpAst*y, opNameB op){
 	left = x;
 	right = y;
@@ -210,7 +217,7 @@ void Funcall::print(){
 
 //Float Constants
 
-FloatConst::FloatConst(float x){
+FloatConst::FloatConst(string x){
 	child = x;
 }
 void FloatConst::print(){
@@ -220,7 +227,7 @@ void FloatConst::print(){
 //Int Constants
 
 IntConst::IntConst(){}
-IntConst::IntConst(int x){
+IntConst::IntConst(string x){
 	child = x;
 }
 void IntConst::print(){
@@ -246,22 +253,30 @@ Identifier::Identifier(string x){
 	child = x;
 }
 void Identifier::print(){
-	cout<<"(Identifier \"" << child << "\")";
+	cout<<"(Id \"" << child << "\")";
 }
 
 
 //Array
 
 ArrayRef::ArrayRef(){}
+ArrayRef::ArrayRef(Identifier* l, vector<ExpAst*> r){
+  this->left = l;
+  this->right = r;
+}
 ArrayRef::ArrayRef(Identifier* left, ExpAst* right){
   this->left = left;
-  this->right = right;
+  (this->right).push_back(right);
 }
+
 void ArrayRef::print(){
   cout<<"(Array ";
   left->print();
   cout << " ";
-  right->print();
+  for (int i = 0; i < right.size(); i++) {
+		right.at(i)->print();
+		if (i < right.size() - 1) cout << " ";
+	}
   cout << ")";
 }
 
