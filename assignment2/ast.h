@@ -167,19 +167,19 @@ public:
 };
 
 class FloatConst: public ExpAst{
-	std::string child;
+	float child;
 public:
   	void print();
   	FloatConst();
-  	FloatConst(std::string child);
+  	FloatConst(float child);
 };
 
 class IntConst: public ExpAst{
-	std::string child;
+	int child;
 public:
   	void print();
   	IntConst();
-  	IntConst(std::string child);
+  	IntConst(int child);
 };
 
 class StringConst: public ExpAst{

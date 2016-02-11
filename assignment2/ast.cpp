@@ -217,7 +217,7 @@ void Funcall::print(){
 
 //Float Constants
 
-FloatConst::FloatConst(string x){
+FloatConst::FloatConst(float x){
 	child = x;
 }
 void FloatConst::print(){
@@ -227,7 +227,7 @@ void FloatConst::print(){
 //Int Constants
 
 IntConst::IntConst(){}
-IntConst::IntConst(string x){
+IntConst::IntConst(int x){
 	child = x;
 }
 void IntConst::print(){

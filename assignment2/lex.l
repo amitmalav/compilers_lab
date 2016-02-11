@@ -22,8 +22,8 @@ if 										return Parser::IF;
 else									return Parser::ELSE;
 while 									return Parser::WHILE;
 for										return Parser::FOR;
-{integer-constant}						{Parser::d_val__ = std::string(matched());return Parser::INT_CONSTANT;}
-{floating-point-constant}				{Parser::d_val__ = std::string(matched());return Parser::FLOAT_CONSTANT;}
+{integer-constant}						{Parser::d_val__ = std::stoi(std::string(matched()));return Parser::INT_CONSTANT;}
+{floating-point-constant}				{Parser::d_val__ = std::stof(std::string(matched()));return Parser::FLOAT_CONSTANT;}
 "("                                     return '(';
 ")"                                     return ')';
 ","                                     return ',';

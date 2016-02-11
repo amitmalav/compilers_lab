@@ -8,11 +8,11 @@
 
 %type <ExpAst> constant_expression expression logical_and_expression equality_expression relational_expression additive_expression multiplicative_expression unary_expression postfix_expression primary_expression l_expression expression_list unary_operator
 
-//%type <Int> 
+%type <Int> INT_CONSTANT
 
-//%type <Float> FLOAT_CONSTANT
+%type <Float> FLOAT_CONSTANT
 
-%type <String>	STRING_LITERAL IDENTIFIER INT_CONSTANT FLOAT_CONSTANT
+%type <String>	STRING_LITERAL IDENTIFIER  
 
 %%
 
@@ -86,7 +86,7 @@ declarator
 
 constant_expression 
         : INT_CONSTANT{
-        	$$ = new IntConst($1);
+        	$$ = new IntConst($1);	
         }
         | FLOAT_CONSTANT{
         	$$ = new FloatConst($1);
@@ -245,13 +245,13 @@ primary_expression
         	 $$ = new OpBinary($1, $3, opNameB::ASSIGN);
         } 
         | INT_CONSTANT{
-        	$$ = new IntConst(d_scanner.matched());
+        	$$ = new IntConst($1);
         }
 		| FLOAT_CONSTANT{
-			$$ = new FloatConst(d_scanner.matched());
+			$$ = new FloatConst($1);
 		}
         | STRING_LITERAL{
-        	$$ = new StringConst(d_scanner.matched());
+        	$$ = new StringConst($1);
         }
 		| '(' expression ')'{
 			$$ = $2;
