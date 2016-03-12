@@ -45,11 +45,11 @@ int Type::size(){
 			if(it != gtable->symtable.end()){
 				return it->second->size();
 			}
-			else return -1;
+			else return 0;
 		}
 		return 4;
 	}
-	return -1;
+	return 0;
 }
 string Type::getType(){
 	if (typeKind == Base|| typeKind == Pointer){
@@ -105,7 +105,7 @@ void SymbolTableEntry::print(){
 		}
 
 	}
-	cout << name << "		"<< s << "		"<<this->size();
+	cout << name << "		"<< s << "		"<<this->size() << "		"<<offset;
 	
 }
 
@@ -123,7 +123,7 @@ int SymbolTable::size(){
 				map <string, SymbolTable*>::iterator it1 = gtable->symtable.find(it->second->idType->getType());
 				if(it1 != gtable->symtable.end()){
 					if(it1->second->isStruct == 1 && (it->second->idType->getType() == entryName))
-						return -1;
+						return 0;
 				}
 			}
 

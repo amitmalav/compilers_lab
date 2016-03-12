@@ -31,6 +31,7 @@ public:
 	int entrysize;
 	int index;
 	int addr;
+	int offset;
 	int isArray;
 	std::vector <int> arrayVector;
 	Type* idType;

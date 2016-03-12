@@ -1,19 +1,14 @@
-struct abc
+struct S
 {
         int a;
         float b;
 };
-
-void func(int x, float *y)
+int main(struct S *a[5])
 {
-        ;    
-}
+        struct S a[5];
+        struct S *ab;
+        float* fa[3];
+        int ia[3];
 
-int main()
-{
-        float a;
-        int c[10];
-        struct abc d[5];
-        void* x;
-        ;
+        i1 = f1 + f2;           // i1 = (int) f1 +FLOAT f2
 }

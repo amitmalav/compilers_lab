@@ -2,20 +2,16 @@
 
 
 
-Struct: abc		struct		8
-Struct member: a		int		4
-Struct member: b		float		4
-
-
-Function: func		void		-1
-Function para: x		int		4
-Function para: y		float*		4
+Struct: S		struct		8
+Struct member: a		int		4		-4
+Struct member: b		float		4		-8
 
 
 Function: main		int		-1
-Local vars: a		float		4
-Local vars: c		array(int, 10)		40
-Local vars: d		array(abc, 5)		40
-Local vars: x		void*		4
+Function para: a		array(S*, 5)		20		20
+Local vars: a		array(S, 5)		40		-40
+Local vars: ab		S*		4		-44
+Local vars: fa		array(float*, 3)		12		-56
+Local vars: ia		array(int, 3)		12		-68
 
 

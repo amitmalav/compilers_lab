@@ -71,7 +71,7 @@ function_definition
 			offset = 0;
 		}
 		compound_statement
-		{
+		{	
 			stable->localvars = paraMap;
 			$$ = $5;
         	//stable->print();
@@ -136,10 +136,11 @@ parameter_declaration
 			ptable->idType = $1;
 			ptable->numPointers = 0;
 			ptable->isArray = 0;
-			offset = 0;
 		}
 		declarator
 		{
+			offset += ptable->size();
+			ptable->offset = offset;
 			paraMap[ptable->name] = $3;
 		}
 	    ;
@@ -410,7 +411,6 @@ declaration
 			ptable->idType = retType;
 			ptable->numPointers = 0;
 			ptable->isArray = 0;
-			offset = 0;
 		}
 		declarator_list';' 
 		;
@@ -421,6 +421,7 @@ declarator_list
 			paraMap[ptable->name] = ptable;
 			stable->localvars = paraMap;
 			offset -= ptable->size();
+			ptable->offset = offset;
 		}
 		| declarator_list ','
 		{
@@ -434,6 +435,7 @@ declarator_list
 			paraMap[ptable->name] = ptable;
 			stable->localvars = paraMap;
 			offset -= ptable->size();
+			ptable->offset = offset;
 		}
 	 	;
 
