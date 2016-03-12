@@ -2,7 +2,7 @@
 %scanner-token-function d_scanner.lex()
 %token STRUCT VOID INT FLOAT RETURN INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL OR_OP AND_OP EQ_OP NE_OP LE_OP GE_OP INC_OP PTR_OP IF ELSE WHILE FOR IDENTIFIER OTHER
 
-%polymorphic StmtAst : StmtAst*; ExpAst : ExpAst*; RefAst : RefAst*; Int : int; Float : float; String : std::string;
+%polymorphic type1 : Type*; SymbolTableEntry : SymbolTableEntry*; StmtAst : StmtAst*; ExpAst : ExpAst*; RefAst : RefAst*; Int : int; Float : float; String : std::string;
 
 %type <StmtAst> translation_unit function_definition struct_specifier compound_statement statement_list statement assignment_statement selection_statement iteration_statement
 
@@ -14,8 +14,9 @@
 
 %type <Float> FLOAT_CONSTANT
 
-%type <String>	STRING_LITERAL IDENTIFIER  
-
+%type <String>	STRING_LITERAL IDENTIFIER  fun_declarator 
+%type <type1> type_specifier VOID INT FLOAT
+%type <SymbolTableEntry> declarator
 %%
 
 translation_unit
@@ -26,27 +27,83 @@ translation_unit
         ;
 
 struct_specifier 
-        : STRUCT IDENTIFIER '{' declaration_list '}' ';'
+        : STRUCT IDENTIFIER
+        {
+        	stable = new SymbolTable();
+        	stable->entryname = $2;
+        	stable->isStruct = 1;
+        	offset = 0;
+        }
+
+        '{' declaration_list '}' ';'
         ;
 
 function_definition
-		: type_specifier fun_declarator compound_statement{
-			$$ = $3;
+		: type_specifier
+		{
+			stable = new SymbolTable();
+			stable->retType = $1;
+			stable->numPointers = 0;
+			stable->isStruct = 0;
+			offset = 0;
+		} 
+		fun_declarator
+		{
+			stable->entryname = $3;
+			stable->parameters = paraMap;
+			paraMap->clear();
+			offset = 0;
+			ptable = new 
+
+		}
+		compound_statement
+		{
+			stable->localvars = paraMap;
+			$$ = $5;
+        	stable->print();
+        	gtable->insert(stable);
         	$$->print();
 		}
 		;
 
-type_specifier                   // This is the information 
-        : VOID 	                 // that gets associated with each identifier
-        | INT   
-		| FLOAT 
-        | STRUCT IDENTIFIER 
+type_specifier                   // This is the information that gets associated with each identifier
+        : VOID
+        {
+        	$$ = new Type(Kind::Base, Basetype::Void);
+        	retType = 	$$;
+        } 
+        | INT
+        {
+        	$$ = new Type(Kind::Base, Basetype::Int);
+        	retType = 	$$;
+        }   
+		| FLOAT
+		{
+        	$$ = new Type(Kind::Base, Basetype::Float);
+        	retType = 	$$;
+        } 
+        | STRUCT IDENTIFIER
+        {
+        	$$ = new Type(Kind::Base, Basetype::Struct, $2);
+        	retType = 	$$;
+        }
         ;
 
 fun_declarator
-		: IDENTIFIER '(' parameter_list ')' 
-		| IDENTIFIER '(' ')' 
-	    | '*' fun_declarator  //The * is associated with the 
+		: IDENTIFIER '(' parameter_list ')'
+		{
+			$$ = $1;
+		} 
+		| IDENTIFIER '(' ')'
+		{
+			$$ = $1;
+		} 
+	    | '*'
+	    {
+	    	stable->numPointers +=1;
+	    	stable->Type->typeKind = Pointer;
+	    }
+	    fun_declarator  //The * is associated with the 
 		;                      //function name
 
 
@@ -56,13 +113,35 @@ parameter_list
 		;
 
 parameter_declaration
-		: type_specifier declarator 
+		: type_specifier
+		{
+			ptable = new SymbolTableEntry();
+			ptable->idType = $1;
+			ptable->numPointers = 0;
+			offset = 0;
+		}
+		declarator
+		{
+			paraMap[ptable->name] = $3;
+		}
 	    ;
 
 declarator
-		: IDENTIFIER 
-		| declarator '[' primary_expression']' // check separately that it is a constant
-        | '*' declarator 
+		: IDENTIFIER
+		{	
+			$$ = ptable;
+			ptable->name = $1;
+		}
+		| declarator '[' primary_expression']' // check separately that it is a constant //  yet to be done
+        | '*'
+        {
+	    	ptable->numPointers +=1;
+	    	ptable->idType->typeKind = Pointer;
+	    }
+        declarator
+        {
+        	$$ = $3;
+        }
         ;
 
 primary_expression              // The smallest expressions, need not have a l_value
@@ -290,17 +369,47 @@ iteration_statement
         ;
 
 declaration_list
-        : declaration  					
+        : declaration
+        {
+        	stable->localvars = paraMap;
+        }  					
         | declaration_list declaration
+        {
+        	stable->localvars = paraMap;
+        }
 		;
 
 declaration
-		: type_specifier declarator_list';' 
+		: type_specifier
+		{
+			ptable = new SymbolTableEntry();
+			ptable->idType = $1;
+			ptable->numPointers = 0;
+			offset = 0;
+		}
+		declarator_list';' 
 		;
 
 declarator_list
 		: declarator
-		| declarator_list ',' declarator 
+		{
+			paraMap[ptable->name] = ptable;
+			stable->localvars = paraMap;
+			offset += ptable->size();
+		}
+		| declarator_list ','
+		{
+			ptable = new SymbolTableEntry();
+			ptable->idType = retType;
+			ptable->numPointers = 0;
+			offset = 0;
+		} 
+		declarator 
+		{
+			paraMap[ptable->name] = ptable;
+			stable->localvars = paraMap;
+			offset += ptable->size();
+		}
 	 	;
 
 
