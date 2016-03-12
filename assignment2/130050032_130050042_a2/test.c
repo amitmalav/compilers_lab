@@ -1,8 +1,3 @@
-int ___hi2func__() {
-    int x;
-    return x;
-}
-
 int ___hi5func__() {
     int x, y;
     int a[2];

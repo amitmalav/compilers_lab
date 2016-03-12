@@ -5,7 +5,7 @@ enum opNameB{OR=1,
 			 EQ_OP=3,
 			 NE_OP=4,
 			 LT=5,
-       GT = 6,
+       		GT = 6,
 			 LE_OP=7,
 			 GE_OP=8,
 			 PLUS=9,
@@ -19,7 +19,9 @@ enum opNameB{OR=1,
 
 enum opNameU{UMINUS=14,
 			 NOT=15,
-			 PP=16
+			 PP=16,
+			 DEREF = 18,
+			 POINTER = 19
 };
 
 
@@ -83,12 +85,12 @@ public:
 };
 
 class Ass: public StmtAst{
-	ExpAst*left,*right;
+	ExpAst *child;
 public:
 	void print();
 	bool empty;
 	Ass();
-	Ass(ExpAst*left, ExpAst*right);
+	Ass(ExpAst*child);
 
 };
 
@@ -158,12 +160,12 @@ public:
 };
 
 class Assign: public ExpAst{
-  	RefAst*left;
+  	ExpAst*left;
   	ExpAst*right;
 public:
   	void print();
  	Assign();
-  	Assign(RefAst*, ExpAst*);
+  	Assign(ExpAst*, ExpAst*);
 };
 
 class Funcall: public ExpAst{
@@ -219,31 +221,31 @@ public:
 
 
 class Member: public RefAst{
-  	RefAst*left;
+  	ExpAst*left;
   	Identifier*right;
 public:
   	void print();
  	Member();
-  	Member(RefAst*, Identifier*);
+  	Member(ExpAst*, Identifier*);
 };
 class Arrow: public RefAst{
-  	RefAst*left;
+  	ExpAst*left;
   	Identifier*right;
 public:
   	void print();
  	Arrow();
-  	Arrow(RefAst*, Identifier*);
+  	Arrow(ExpAst*, Identifier*);
 };
 
 
 
 class ArrayRef: public RefAst{
-	RefAst*left;
+	ExpAst*left;
   	ExpAst* right;
 public:
   	void print();
   	ArrayRef();
-  	ArrayRef(RefAst* left, ExpAst* right);
+  	ArrayRef(ExpAst* left, ExpAst* right);
 };
 
 

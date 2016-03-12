@@ -1,23 +1,19 @@
-struct hello {
+struct abc
+{
         int a;
         float b;
 };
 
-struct hello_world {
-        int a;
-        float b;
-};
-
-int get_a(struct hello k) {
-        return k.a;
+void func(int x, float *y)
+{
+        ;    
 }
 
-int main() {
-        int b;
-        int a;
-        struct hello_world k;  
-
-        a = get_a(k);
-
-        return 0;
+int main()
+{
+        float a;
+        int c[10];
+        struct abc d[5];
+        void* x;
+        ;
 }

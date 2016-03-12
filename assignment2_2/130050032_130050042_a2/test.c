@@ -1,13 +1,24 @@
-int ___hi5func__() {
-    int x, y;
-    int a[2];
-    for(x = 0; x < 10; x++){
-    	x = x + 1;a[2] = x;
-    	a[2] = &x;
-    	z = a[2].x;
-    	y = a[1]->x;
-    	y = *x;
+// struct hello {
+//         int a;
+//         float b;
+// };
 
-    }
-    	
+struct hello_world {
+        int a;
+        float b;
+};
+
+int get_a(struct hello k) {
+        return k.a;
+}
+
+int main() {
+        int b;
+        int a;
+        float c;
+        struct hello_world k;  
+
+        a = get_a(k);
+
+        return 0;
 }

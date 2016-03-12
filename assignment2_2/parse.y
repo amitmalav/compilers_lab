@@ -19,6 +19,16 @@
 %type <SymbolTableEntry> declarator
 %%
 
+translation_unit_new
+		: translation_unit
+		{
+			cout << endl << endl<< endl<< endl;
+			gtable->print();
+		}
+		;
+
+
+
 translation_unit
         :  struct_specifier
  		| function_definition
@@ -30,13 +40,19 @@ struct_specifier
         : STRUCT IDENTIFIER
         {
         	stable = new SymbolTable();
-        	stable->entryname = $2;
+        	stable->entryName = $2;
         	stable->isStruct = 1;
+        	stable->retType = new Type(Kind::Base, Basetype::Struct, $2);
         	offset = 0;
+        } '{' declaration_list '}' ';'
+        {
+        	stable->localvars = paraMap;
+        	gtable->insertTable(stable);
+        	paraMap.clear();
         }
-
-        '{' declaration_list '}' ';'
         ;
+
+
 
 function_definition
 		: type_specifier
@@ -49,20 +65,19 @@ function_definition
 		} 
 		fun_declarator
 		{
-			stable->entryname = $3;
+			stable->entryName = $3;
 			stable->parameters = paraMap;
-			paraMap->clear();
+			paraMap.clear();
 			offset = 0;
-			ptable = new 
-
 		}
 		compound_statement
 		{
 			stable->localvars = paraMap;
 			$$ = $5;
-        	stable->print();
-        	gtable->insert(stable);
-        	$$->print();
+        	//stable->print();
+        	gtable->insertTable(stable);
+        	paraMap.clear();
+        	//$$->print();
 		}
 		;
 
@@ -78,12 +93,12 @@ type_specifier                   // This is the information that gets associated
         	retType = 	$$;
         }   
 		| FLOAT
-		{
+		{	
         	$$ = new Type(Kind::Base, Basetype::Float);
         	retType = 	$$;
         } 
         | STRUCT IDENTIFIER
-        {
+        {	
         	$$ = new Type(Kind::Base, Basetype::Struct, $2);
         	retType = 	$$;
         }
@@ -95,15 +110,17 @@ fun_declarator
 			$$ = $1;
 		} 
 		| IDENTIFIER '(' ')'
-		{
+		{	
 			$$ = $1;
 		} 
 	    | '*'
 	    {
 	    	stable->numPointers +=1;
-	    	stable->Type->typeKind = Pointer;
+	    	stable->retType->typeKind = Pointer;
 	    }
-	    fun_declarator  //The * is associated with the 
+	    fun_declarator{
+	    	$$ = $3;
+	    }  //The * is associated with the 
 		;                      //function name
 
 
@@ -118,6 +135,7 @@ parameter_declaration
 			ptable = new SymbolTableEntry();
 			ptable->idType = $1;
 			ptable->numPointers = 0;
+			ptable->isArray = 0;
 			offset = 0;
 		}
 		declarator
@@ -132,7 +150,11 @@ declarator
 			$$ = ptable;
 			ptable->name = $1;
 		}
-		| declarator '[' primary_expression']' // check separately that it is a constant //  yet to be done
+		| declarator '[' primary_expression']'
+		{
+			ptable->isArray = 1;
+			ptable->arrayVector.push_back((int)pusharraysize);
+		} // check separately that it is a constant //  yet to be done
         | '*'
         {
 	    	ptable->numPointers +=1;
@@ -150,9 +172,11 @@ primary_expression              // The smallest expressions, need not have a l_v
     	$$ = new Identifier($1);
     	}           // primary expression has IDENTIFIER now
 	    | INT_CONSTANT{
+	    	pusharraysize = $1;
 	    	$$ = new IntConst($1);
 	    }
 	    | FLOAT_CONSTANT{
+	    	pusharraysize = $1;
 	    	$$ = new FloatConst($1);
 	    }
 	    | STRING_LITERAL{
@@ -370,7 +394,7 @@ iteration_statement
 
 declaration_list
         : declaration
-        {
+        {	
         	stable->localvars = paraMap;
         }  					
         | declaration_list declaration
@@ -383,8 +407,9 @@ declaration
 		: type_specifier
 		{
 			ptable = new SymbolTableEntry();
-			ptable->idType = $1;
+			ptable->idType = retType;
 			ptable->numPointers = 0;
+			ptable->isArray = 0;
 			offset = 0;
 		}
 		declarator_list';' 
@@ -392,23 +417,23 @@ declaration
 
 declarator_list
 		: declarator
-		{
+		{	
 			paraMap[ptable->name] = ptable;
 			stable->localvars = paraMap;
-			offset += ptable->size();
+			offset -= ptable->size();
 		}
 		| declarator_list ','
 		{
 			ptable = new SymbolTableEntry();
 			ptable->idType = retType;
+			ptable->isArray = 0;
 			ptable->numPointers = 0;
-			offset = 0;
 		} 
 		declarator 
 		{
 			paraMap[ptable->name] = ptable;
 			stable->localvars = paraMap;
-			offset += ptable->size();
+			offset -= ptable->size();
 		}
 	 	;
 

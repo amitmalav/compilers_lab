@@ -1,18 +1,4 @@
-void yoyo(int p,float q){
-	for(p=7;p<9;p++){
-	q=7;
-	}
-}
-
-int main(){
-
-	if(23){
-		while(yo){
-			return 123.e-3;
-			return "123\n\\\"";
-		}
-	}
-	else{
-	e=76+123*6;
-	}
+int main() {
+    int a, b, c;
+    a = b + c;
 }

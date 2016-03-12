@@ -20,7 +20,9 @@ string get_enum[] = {
 	"UMINUS",
 	"NOT",
 	"PP",
-	"OBJ_OP"
+	"OBJ_OP",
+	"DEREF",
+	"POINTER"
 };
 
 
@@ -71,9 +73,8 @@ void Seq::print(){
 Ass::Ass(){
 	empty = true;
 }
-Ass::Ass(ExpAst* l, ExpAst* r){
-	left = l;
-	right = r;
+Ass::Ass(ExpAst* c){
+	child = c;
 	empty = false;
 }
 void Ass::print(){
@@ -82,9 +83,7 @@ void Ass::print(){
 		return;
 	}
 	cout << "(Ass ";
-	left-> print();
-	cout << " ";
-	right-> print();
+	child-> print();
 	cout << ")";
 }
 
@@ -199,7 +198,7 @@ void OpUnary::print(){
 
 //Assign
 Assign::Assign() {}
-Assign::Assign(RefAst* l, ExpAst* r){
+Assign::Assign(ExpAst* l, ExpAst* r){
 	left = l;
 	right = r;
 }
@@ -278,7 +277,7 @@ void StringConst::print(){
 ////////////////////////////////////////////////////////
 
 Member::Member() {}
-Member::Member(RefAst* l, Identifier* r){
+Member::Member(ExpAst* l, Identifier* r){
 	left = l;
 	right = r;
 }
@@ -293,7 +292,7 @@ void Member::print(){
 
 
 Arrow::Arrow() {}
-Arrow::Arrow(RefAst* l, Identifier* r){
+Arrow::Arrow(ExpAst* l, Identifier* r){
 	left = l;
 	right = r;
 }
@@ -321,7 +320,7 @@ void Identifier::print(){
 //Array
 
 ArrayRef::ArrayRef() {}
-ArrayRef::ArrayRef(RefAst* l, ExpAst* r){
+ArrayRef::ArrayRef(ExpAst* l, ExpAst* r){
 	left = l;
 	right = r;
 }
@@ -346,3 +345,5 @@ void DeRef::print(){
 	child->print();
 	cout <<")";
 }
+
+

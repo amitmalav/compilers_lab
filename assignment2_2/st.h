@@ -1,6 +1,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <vector>
 using namespace std;
 
 enum Kind {
@@ -17,14 +18,11 @@ public:
 	Kind typeKind;
 	Basetype base;
 	string structType;
+	Type();
 	Type(Kind, Basetype);
 	Type(Kind,Basetype, string);
-	void Print();
-	bool equal(Type*);
-	Type* copy();
+	string getType();
 	int size();
-	bool isNumeric();
-
 };
 
 class SymbolTableEntry{
@@ -33,13 +31,13 @@ public:
 	int entrysize;
 	int index;
 	int addr;
+	int isArray;
+	std::vector <int> arrayVector;
 	Type* idType;
 	int numPointers;
 	SymbolTableEntry();
 	int size();
-	SymbolTableEntry(int addr, Type* idType);
-	SymbolTableEntry(int addr, Type* idType, string name);
-	void Print();
+	void print();
 };
 
 
@@ -51,12 +49,15 @@ public:
 	Type *retType;
 	int numPointers;
 	int isStruct;
-	void Print();
+	int size();
+	void print();
 	SymbolTable();
 };
 
 class GlobalTable{
 public:
-	map <string, SymbolTable> symtables;
+	map <string, SymbolTable*> symtable;
 	void insertTable(SymbolTable*);
+	GlobalTable();
+	void print();
 };
