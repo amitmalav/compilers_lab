@@ -12,6 +12,7 @@ int offset = 0;
 Type* retType;
 GlobalTable *gtable = new GlobalTable();
 int pusharraysize = 0;
+int isConstant = 0;
 
 string gettype[] = {
 	"int",

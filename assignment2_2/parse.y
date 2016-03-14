@@ -172,6 +172,10 @@ declarator
 		}
 		| declarator '[' primary_expression']'
 		{
+			if(isConstant == 0){
+				cout << "Error:: On line " << d_scanner.lineNr() << ": only constants are allowed inside array expression" << endl;
+				exit(0);
+			}
 			ptable->isArray = 1;
 			ptable->arrayVector.push_back((int)pusharraysize);
 		} // check separately that it is a constant //  yet to be done
@@ -189,21 +193,26 @@ declarator
 primary_expression              // The smallest expressions, need not have a l_value
       
     	: IDENTIFIER{
-    	$$ = new Identifier($1);
+    		$$ = new Identifier($1);
+    		isConstant = 0;
     	}           // primary expression has IDENTIFIER now
 	    | INT_CONSTANT{
 	    	pusharraysize = $1;
 	    	$$ = new IntConst($1);
+	    	isConstant = 1;
 	    }
 	    | FLOAT_CONSTANT{
 	    	pusharraysize = $1;
 	    	$$ = new FloatConst($1);
+	    	isConstant = 1;
 	    }
 	    | STRING_LITERAL{
 	    	$$ = new StringConst($1);
+	    	isConstant = 0;
 	    }
 	    | '(' expression ')'{
 	    	$$ = $2;
+	    	isConstant = 0;
 	    }
 	    ;
 

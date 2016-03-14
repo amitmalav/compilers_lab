@@ -1,16 +1,16 @@
-Warning:: On line 2Struct S declared inside parameter list
-(Block [(Return (IntConst 1))])
+(Block [(Ass (Assign (Id "i") (Member (Array (Id "a") (IntConst 1)) (Id "k")))) (Return (IntConst 1))])
 (Empty)(Block [])
 
 
 
 
+Struct: S		struct		4
+Struct member: k		int		4		-4
+
+
 Function: a		int		-1
-Function para: c		array(S*, 5)		20		20
-Local vars: a		array(S, 5)		0		0
-Local vars: ab		S*		4		-4
-Local vars: fa		array(float*, 3)		12		-16
-Local vars: ia		array(int, 3)		12		-28
+Local vars: i		int		4		-8
+Local vars: ia		array(int, 1)		4		-4
 
 
 Function: main		int		-1

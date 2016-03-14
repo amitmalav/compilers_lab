@@ -1,10 +1,12 @@
+struct S{
+        int k;
 
-int a(struct S *c[5])
+};
+int a()
 {
-        struct S a[5];
-        struct S *ab;
-        float* fa[3];
-        int ia[3];
+        int ia[1.0];
+        int i;
+        i = a[1].k;
         return 1;
 
         // i1 = f1 + f2;           // i1 = (int) f1 +FLOAT f2
