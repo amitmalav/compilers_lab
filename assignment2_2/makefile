@@ -11,7 +11,7 @@ Scanner.ih: lex.l
 
 parse.cc Parser.h Parserbase.h Parser.ih: parse.y
 	bisonc++  --construction parse.y; 
-	sed -i '/insert preincludes/a #include "ast.h"\n#include "st.h"' Parserbase.h;
+	sed -i '/insert preincludes/a #include "ast.h"\n #include <map>\n #include "st.h"' Parserbase.h;
 	sed -i '\|STYPE__     d_val__;| d' Parserbase.h;
 	sed -i '\|typedef Meta__::SType STYPE__;| a \\tpublic: static STYPE__  d_val__; ' Parserbase.h;
 	sed -i '/include "Parser.ih"/a #include "ast.cpp"\n#include "st.cpp"' parse.cc;

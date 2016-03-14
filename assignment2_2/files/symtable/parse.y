@@ -39,11 +39,6 @@ translation_unit
 struct_specifier 
         : STRUCT IDENTIFIER
         {
-        	if (gtable->symtable.find($2) != gtable->symtable.end())
-        	{
-				cout << "Error:: On line " << d_scanner.lineNr() << " Redefinition of Struct: " << $2  << endl;
-				exit(0);
-			}
         	stable = new SymbolTable();
         	stable->entryName = $2;
         	stable->isStruct = 1;
@@ -70,13 +65,6 @@ function_definition
 		} 
 		fun_declarator
 		{
-			map <string, SymbolTable*>::iterator it = gtable->symtable.find($3);
-			if(it != gtable->symtable.end()){
-				if(it->second->isStruct == 0){
-					cout << "Error:: On line " << d_scanner.lineNr() << " Redefinition of Function: " << $3  << endl;
-					exit(0);
-				}
-			}
 			stable->entryName = $3;
 			stable->parameters = paraMap;
 			paraMap.clear();
@@ -89,8 +77,7 @@ function_definition
         	//stable->print();
         	gtable->insertTable(stable);
         	paraMap.clear();
-        	$$->print();
-        	cout << endl;
+        	//$$->print();
 		}
 		;
 
@@ -151,13 +138,7 @@ parameter_declaration
 			ptable->isArray = 0;
 		}
 		declarator
-		{	if(ptable->idType->base == Struct){
-				map <string, SymbolTable*>::iterator it = gtable->symtable.find(ptable->idType->structType);
-				if(it == gtable->symtable.end()){
-						cout << "Warning:: On line " << d_scanner.lineNr() << " Struct " << ptable->idType->structType << " declared inside parameter list"<< endl;
-				}
-			}
-
+		{
 			offset += ptable->size();
 			ptable->offset = offset;
 			paraMap[ptable->name] = $3;

@@ -1,17 +1,18 @@
+Warning:: On line 2Struct S declared inside parameter list
+(Block [(Return (IntConst 1))])
+(Empty)(Block [])
 
 
 
 
-Struct: S		struct		8
-Struct member: a		int		4		-4
-Struct member: b		float		4		-8
+Function: a		int		-1
+Function para: c		array(S*, 5)		20		20
+Local vars: a		array(S, 5)		0		0
+Local vars: ab		S*		4		-4
+Local vars: fa		array(float*, 3)		12		-16
+Local vars: ia		array(int, 3)		12		-28
 
 
 Function: main		int		-1
-Function para: a		array(S*, 5)		20		20
-Local vars: a		array(S, 5)		40		-40
-Local vars: ab		S*		4		-44
-Local vars: fa		array(float*, 3)		12		-56
-Local vars: ia		array(int, 3)		12		-68
 
 
