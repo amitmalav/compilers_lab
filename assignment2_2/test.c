@@ -1,14 +1,9 @@
-struct S{
-        int k;
-
+struct A{
+	int k;
 };
-int a()
-{
-        int ia[1.0];
-        int i;
-        i = a[1].k;
-        return 1;
-
-        // i1 = f1 + f2;           // i1 = (int) f1 +FLOAT f2
+struct A* a(){
+	void **bla;
+	return bla;
 }
-int main(){}
+int main(){
+}

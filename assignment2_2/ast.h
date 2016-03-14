@@ -21,13 +21,16 @@ enum opNameU{UMINUS=14,
 			 NOT=15,
 			 PP=16,
 			 DEREF = 18,
-			 POINTER = 19
+			 POINTER = 19,
+       TO_FLOAT = 20,
+       TO_INT = 21
 };
 
 
 class abstract_astnode{
 public:
   virtual void print () = 0;
+  Type* type;
   //virtual std::string generate_code(const symbolTable&) = 0;
   //virtual basic_types getType() = 0;
   //virtual bool checkTypeofAST() = 0;
@@ -99,7 +102,7 @@ class Return: public StmtAst{
 public:
 	void print();
 	Return();
-	Return(ExpAst*);
+	Return(ExpAst*, Type*);
 };
 
 class If: public StmtAst{

@@ -37,9 +37,9 @@ translation_unit
         ;
 
 struct_specifier 
-        : STRUCT IDENTIFIER
+        : STRUCT IDENTIFIER '{'
         {
-        	if (gtable->symtable.find($2) != gtable->symtable.end())
+        	if (gtable->strsymtable.find($2) != gtable->strsymtable.end())
         	{
 				cout << "Error:: On line " << d_scanner.lineNr() << " Redefinition of Struct: " << $2  << endl;
 				exit(0);
@@ -49,10 +49,10 @@ struct_specifier
         	stable->isStruct = 1;
         	stable->retType = new Type(Kind::Base, Basetype::Struct, $2);
         	offset = 0;
-        } '{' declaration_list '}' ';'
+        } declaration_list '}' ';'
         {
         	stable->localvars = paraMap;
-        	gtable->insertTable(stable);
+        	gtable->insertTablestr(stable);
         	paraMap.clear();
         }
         ;
@@ -70,8 +70,8 @@ function_definition
 		} 
 		fun_declarator
 		{
-			map <string, SymbolTable*>::iterator it = gtable->symtable.find($3);
-			if(it != gtable->symtable.end()){
+			map <string, SymbolTable*>::iterator it = gtable->funsymtable.find($3);
+			if(it != gtable->funsymtable.end()){
 				if(it->second->isStruct == 0){
 					cout << "Error:: On line " << d_scanner.lineNr() << " Redefinition of Function: " << $3  << endl;
 					exit(0);
@@ -87,7 +87,7 @@ function_definition
 			stable->localvars = paraMap;
 			$$ = $5;
         	//stable->print();
-        	gtable->insertTable(stable);
+        	gtable->insertTablefun(stable);
         	paraMap.clear();
         	$$->print();
         	cout << endl;
@@ -129,6 +129,7 @@ fun_declarator
 	    | '*'
 	    {
 	    	stable->numPointers +=1;
+	    	stable->retType->num_type_pointers++;
 	    	stable->retType->typeKind = Pointer;
 	    }
 	    fun_declarator{
@@ -151,10 +152,32 @@ parameter_declaration
 			ptable->isArray = 0;
 		}
 		declarator
-		{	if(ptable->idType->base == Struct){
+		{
+
+			if(ptable->idType->base == Void){
+				if(ptable->idType->typeKind != Pointer){
+					cout << "Error:: On line " << d_scanner.lineNr() << " \'"<< ptable->name <<"\' has incomplete type"  << endl;
+					exit(0);
+				}
+			}
+			map <string, SymbolTableEntry*>::iterator pit = paraMap.find(ptable->name);
+			if(pit != paraMap.end()){
+					string tmp = pit->second->idType->getType();
+				 	for(int i = 0; i < pit->second->numPointers; i++){
+				 		tmp = tmp + "*";
+				 	}
+					cout << "Error:: On line " << d_scanner.lineNr() << " '"<< ptable->name <<"\' has a previous declaration as \'"<< tmp << " " <<ptable->name << "\'"<< endl;
+					exit(0);
+
+			}
+			if(ptable->idType->base == Struct){
 				map <string, SymbolTable*>::iterator it = gtable->symtable.find(ptable->idType->structType);
 				if(it == gtable->symtable.end()){
-						cout << "Warning:: On line " << d_scanner.lineNr() << " Struct " << ptable->idType->structType << " declared inside parameter list"<< endl;
+					//remove the comments to let undeclared struct pointer pass as argument
+						//if(ptable->numPointers == 0){
+							cout << "Error:: On line " << d_scanner.lineNr() << " \'"<< ptable->name <<"\' has incomplete type"  << endl;
+							exit(0);
+						//}
 				}
 			}
 
@@ -169,11 +192,12 @@ declarator
 		{	
 			$$ = ptable;
 			ptable->name = $1;
+
 		}
 		| declarator '[' primary_expression']'
 		{
 			if(isConstant == 0){
-				cout << "Error:: On line " << d_scanner.lineNr() << ": only constants are allowed inside array expression" << endl;
+				cout << "Error:: On line " << d_scanner.lineNr() << ": only int constants are allowed inside array expression" << endl;
 				exit(0);
 			}
 			ptable->isArray = 1;
@@ -182,6 +206,7 @@ declarator
         | '*'
         {
 	    	ptable->numPointers +=1;
+	    	ptable->idType->num_type_pointers++;
 	    	ptable->idType->typeKind = Pointer;
 	    }
         declarator
@@ -204,7 +229,7 @@ primary_expression              // The smallest expressions, need not have a l_v
 	    | FLOAT_CONSTANT{
 	    	pusharraysize = $1;
 	    	$$ = new FloatConst($1);
-	    	isConstant = 1;
+	    	isConstant = 0;
 	    }
 	    | STRING_LITERAL{
 	    	$$ = new StringConst($1);
@@ -219,6 +244,7 @@ primary_expression              // The smallest expressions, need not have a l_v
 compound_statement
 		: '{' '}'{
 			$$ = new BlockStmt();
+			$$->type = new Type(Ok);
 		}
 		| '{' statement_list '}'{
 			$$ = $2;
@@ -253,16 +279,20 @@ statement
 			$$ = $1;
 		}
 	    | RETURN expression ';'{
-	    	$$ = new Return($2);
+	    	$$ = new Return($2, stable->retType);
+	    	if ($$->type->typeKind == Error){
+				cout<<"Error:: On line "<<d_scanner.lineNr()<<", Incompatible return type."<<endl;	
+				exit(0);		
+			}
 	    }
 	    ;
 
 assignment_statement
 		: ';'{
-			$$ = new Ass();
+			$$ = new Ass();	//??
 		}						
 		|  expression ';'{
-			$$ = new Ass($1);
+			$$ = new Ass($1);// type??
 		}
 		;
 
@@ -272,6 +302,10 @@ expression                                   //assignment expressions are right 
         }
         |  unary_expression '=' expression{
         	$$ = new Assign($1, $3);
+        	if ($$->type->typeKind == Error){
+				cout<<"Error:: On line "<<d_scanner.lineNr()<<", Assignment of Incompatible types."<<endl;	
+				exit(0);		
+			}
         }   // l_expression has been replaced by unary_expression.
         ;                                    // This may generate programs that are syntactically incorrect.
                                              // Eliminate them during semantic analysis.
@@ -434,11 +468,12 @@ declaration_list
 
 declaration
 		: type_specifier
-		{
+		{	
 			ptable = new SymbolTableEntry();
 			ptable->idType = retType;
 			ptable->numPointers = 0;
 			ptable->isArray = 0;
+
 		}
 		declarator_list';' 
 		;
@@ -446,6 +481,45 @@ declaration
 declarator_list
 		: declarator
 		{	
+			if(ptable->idType->base == Void){
+				if(ptable->idType->typeKind != Pointer){
+					cout << "Error:: On line " << d_scanner.lineNr() <<" variable or field "<< " \'"<< ptable->name <<"\' declared void"  << endl;
+					exit(0);
+				}
+			}
+			if(ptable->idType->base == Struct){
+				map <string, SymbolTable*>::iterator it = gtable->strsymtable.find(ptable->idType->structType);
+				if(it == gtable->strsymtable.end()){
+					//put the comments to let undeclared struct pointer declare
+						if(ptable->numPointers == 0){
+							cout << "Error:: On line " << d_scanner.lineNr() << " \'"<< ptable->name <<"\' has incomplete type"  << endl;
+							exit(0);
+						}
+				}
+				else{
+					if((ptable->idType->structType == stable->entryName) && (stable->isStruct == 1)){
+						if(ptable->numPointers == 0){
+						cout << "Error:: On line " << d_scanner.lineNr() << " \'"<< ptable->name <<"\' has incomplete type"  << endl;
+						exit(0);
+						}
+					}
+				}
+			}
+
+			map <string, SymbolTableEntry*>::iterator pit = paraMap.find(ptable->name);
+			if(pit != paraMap.end()){
+					string tmp = pit->second->idType->getType();
+				 	for(int i = 0; i < pit->second->numPointers; i++){
+				 		tmp = tmp + "*";
+				 	}
+					cout << "Error:: On line " << d_scanner.lineNr() << " '"<< ptable->name <<"\' has a previous declaration as \'"<< tmp << " " <<ptable->name << "\'"<< endl;
+					exit(0);
+
+			}
+
+
+
+
 			paraMap[ptable->name] = ptable;
 			stable->localvars = paraMap;
 			offset -= ptable->size();
@@ -460,11 +534,45 @@ declarator_list
 		} 
 		declarator 
 		{
+			if(ptable->idType->base == Void){
+				if(ptable->idType->typeKind != Pointer){
+					cout << "Error:: On line " << d_scanner.lineNr() <<" variable or field "<< " \'"<< ptable->name <<"\' declared void"  << endl;
+					exit(0);
+				}
+			}
+			if(ptable->idType->base == Struct){
+				map <string, SymbolTable*>::iterator it = gtable->strsymtable.find(ptable->idType->structType);
+				if(it == gtable->strsymtable.end()){
+					//put the comments to let undeclared struct pointer declare
+						if(ptable->numPointers == 0){
+							cout << "Error:: On line " << d_scanner.lineNr() << " \'"<< ptable->name <<"\' has incomplete type"  << endl;
+							exit(0);
+						}
+				}
+				else{
+					if((ptable->idType->structType == stable->entryName) && (stable->isStruct == 1)){
+						if(ptable->numPointers == 0){
+						cout << "Error:: On line " << d_scanner.lineNr() << " \'"<< ptable->name <<"\' has incomplete type"  << endl;
+						exit(0);
+						}
+					}
+				}
+			}
+
+			map <string, SymbolTableEntry*>::iterator pit = paraMap.find(ptable->name);
+			if(pit != paraMap.end()){
+					string tmp = pit->second->idType->getType();
+				 	for(int i = 0; i < pit->second->numPointers; i++){
+				 		tmp = tmp + "*";
+				 	}
+					cout << "Error:: On line " << d_scanner.lineNr() << " '"<< ptable->name <<"\' has a previous declaration as \'"<< tmp << " " <<ptable->name << "\'"<< endl;
+					exit(0);
+
+			}
+
 			paraMap[ptable->name] = ptable;
 			stable->localvars = paraMap;
 			offset -= ptable->size();
 			ptable->offset = offset;
 		}
 	 	;
-
-

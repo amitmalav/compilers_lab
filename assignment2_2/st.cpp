@@ -24,16 +24,48 @@ string gettype[] = {
 
 //type
 Type::Type(){}
-
+Type::Type(Kind tag){
+	this->typeKind = tag;
+	num_type_pointers = 0;
+}
 Type::Type(Kind tag, Basetype basetype){
 	this->typeKind = tag;
 	this->base = basetype;
+	num_type_pointers = 0;
 }
 Type::Type(Kind tag, Basetype basetype, string structtype){
 	this->typeKind = tag;
 	this->base = basetype;
 	this->structType = structtype;
+	num_type_pointers = 0;
 }
+
+bool Type::equal(Type* t){
+	if(typeKind != t->typeKind)return false;
+	if(typeKind == Base){
+		// if(!((this->getType() != "int" || this->getType() != "float")&& (t->getType() != "int" || t->getType() != "float"))){
+		// 	return true;
+		// }
+		// else 
+			return(this->getType() == t->getType());
+	}
+	if(typeKind == Pointer){
+		if(this->getType() != t->getType()){
+			if(this->getType() == "void"){
+				if(this->num_type_pointers == 1)return true;
+				else return false;
+			}
+			else return false;
+		}
+		else{
+			return (this->num_type_pointers == t->num_type_pointers);
+		}
+	}
+	return true;
+}
+
+
+
 int Type::size(){
 	if(typeKind == Pointer){
 		return 4;
@@ -42,8 +74,9 @@ int Type::size(){
 		if (base == Void)
 			return 0;
 		if(base == Struct){
-			map <string, SymbolTable*>::iterator it = gtable->symtable.find(structType);
-			if(it != gtable->symtable.end()){
+
+			map <string, SymbolTable*>::iterator it = gtable->strsymtable.find(structType);
+			if(it != gtable->strsymtable.end()){
 				return it->second->size();
 			}
 			else return 0;
@@ -121,8 +154,8 @@ int SymbolTable::size(){
 		
 		for(map<string, SymbolTableEntry*>::iterator it = localvars.begin(); it != localvars.end(); ++it){
 			if(it->second->idType->base == Struct && (it->second->numPointers == 0)){
-				map <string, SymbolTable*>::iterator it1 = gtable->symtable.find(it->second->idType->getType());
-				if(it1 != gtable->symtable.end()){
+				map <string, SymbolTable*>::iterator it1 = gtable->strsymtable.find(it->second->idType->getType());
+				if(it1 != gtable->strsymtable.end()){
 					if(it1->second->isStruct == 1 && (it->second->idType->getType() == entryName))
 						return 0;
 				}
@@ -130,7 +163,7 @@ int SymbolTable::size(){
 
 
 			ssize = ssize + it->second->size();
-				    // iterator->first = key
+				// iterator->first = key
 			    // iterator->second = value
 			    // Repeat if you also want to iterate through the second map.
 		}
@@ -164,15 +197,25 @@ void SymbolTable::print(){
 }
 GlobalTable::GlobalTable(){}
 void GlobalTable::print(){
-	for(map <string, SymbolTable*>::iterator it = symtable.begin(); it != symtable.end(); ++it){
+	for(map <string, SymbolTable*>::iterator it = strsymtable.begin(); it != strsymtable.end(); ++it){
+			it->second->print();
+			cout << endl<<endl;
+	}
+	for(map <string, SymbolTable*>::iterator it = funsymtable.begin(); it != funsymtable.end(); ++it){
 			it->second->print();
 			cout << endl<<endl;
 	}
 
 
 }
-void GlobalTable::insertTable(SymbolTable* st){
+void GlobalTable::insertTablefun(SymbolTable* st){
+	funsymtable[st->entryName] = st;
 	symtable[st->entryName] = st;
 }
+void GlobalTable::insertTablestr(SymbolTable* st){
+	strsymtable[st->entryName] = st;
+	symtable[st->entryName] = st;
+}
+
 
 

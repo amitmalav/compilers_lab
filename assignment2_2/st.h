@@ -18,9 +18,12 @@ public:
 	Kind typeKind;
 	Basetype base;
 	string structType;
+	int num_type_pointers;
 	Type();
+	Type(Kind);
 	Type(Kind, Basetype);
 	Type(Kind,Basetype, string);
+	bool equal(Type*);
 	string getType();
 	int size();
 };
@@ -57,8 +60,11 @@ public:
 
 class GlobalTable{
 public:
+	map <string, SymbolTable*> funsymtable;
+	map <string, SymbolTable*> strsymtable;
 	map <string, SymbolTable*> symtable;
-	void insertTable(SymbolTable*);
+	void insertTablefun(SymbolTable*);
+	void insertTablestr(SymbolTable*);
 	GlobalTable();
 	void print();
 };

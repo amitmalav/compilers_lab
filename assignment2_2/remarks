@@ -1,0 +1,12 @@
+1)
+struct S{
+	struct A* k; //is valid unless line 7,8
+};
+int main(){
+	struct S r;
+	int a;
+	r.k->p = 10;
+	a = r.k->p;
+}
+
+2)name of struct can be int?

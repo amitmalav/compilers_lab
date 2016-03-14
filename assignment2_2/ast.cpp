@@ -22,7 +22,9 @@ string get_enum[] = {
 	"PP",
 	"OBJ_OP",
 	"DEREF",
-	"POINTER"
+	"POINTER",
+	"TO_FLOAT",
+	"TO_INT"
 };
 
 
@@ -33,8 +35,8 @@ BlockStmt::BlockStmt(StmtAst* c){
 	children.push_back(c);
 }
 void BlockStmt::print(){
-	if (children.empty()) cout << "(Empty)";
 	cout << "(Block [";
+	if (children.empty()) cout << "(Empty)";
 	for (int i = 0; i < children.size(); i++) {
 		children.at(i)->print();
 		if (i < children.size() - 1) cout << " ";
@@ -43,7 +45,7 @@ void BlockStmt::print(){
 }
 
 void Empty::print(){
-	cout << "(Empty)";
+	// cout << "(Empty)";
 }
 
 
@@ -72,26 +74,49 @@ void Seq::print(){
 
 Ass::Ass(){
 	empty = true;
+	type = new Type(Ok);
 }
 Ass::Ass(ExpAst* c){
 	child = c;
 	empty = false;
+	type = c->type;
 }
 void Ass::print(){
 	if(empty){
-		cout << "(Empty)";
+		// cout << "(Empty)";
 		return;
 	}
-	cout << "(Ass ";
+	// cout << "(Ass ";
 	child-> print();
-	cout << ")";
+	// cout << ")";
 }
 
 
 //Return
 Return::Return(){}
-Return::Return(ExpAst* c) {
-	child = c;
+Return::Return(ExpAst* c, Type *t) {
+	if(t->equal(c->type)){
+		child = c;
+		type = new Type(Ok);
+	}
+	else if (c->type->typeKind != Base) {
+		type = new Type(Error);
+		child = c;
+	}
+	else if ((c->type->base == Int) && (t->type->base == Float)){
+		OpUnary *xf = new OpUnary(c, TO_FLOAT);
+		child = xf;
+		type = new Type(Ok);
+	}
+	else if ((c->type->base == Float) && (t->type->base == Int)){
+		OpUnary *xf = new OpUnary(c, TO_INT);
+		child = xf;
+		type = new Type(Ok);
+	}
+	else{
+		child = c;
+		type = new Type(Error);
+	}
 }
 
 void Return::print(){
@@ -184,6 +209,7 @@ OpUnary::OpUnary(opNameU op){
 }
 OpUnary::OpUnary(ExpAst* x, opNameU op) {
 	child = x;
+	type = x->type;
 	opName = op;
 }
 OpUnary::OpUnary(ExpAst * x, OpUnary* y) {
@@ -199,8 +225,37 @@ void OpUnary::print(){
 //Assign
 Assign::Assign() {}
 Assign::Assign(ExpAst* l, ExpAst* r){
-	left = l;
-	right = r;
+	if((l->type)->equal(r->type)){
+		left = l;
+		right = r;
+		type = l->type;
+	}
+
+	else if ((l->type->typeKind != Base) &&(r->type->typeKind != Base)) {
+		type = new Type(Error);
+		left = l;
+		right = r;
+	}
+
+	else if ((l->type->base == Int) && (r->type->base == Float)){
+		OpUnary *xf = new OpUnary(r, TO_INT);
+		left = l;
+		right = xf;
+		type = l->type;
+	}
+	else if ((l->type->base == Float) && (r->type->base == Int)){
+		OpUnary *xf = new OpUnary(r, TO_FLOAT);
+		left = l;
+		right = xf;
+		type = l->type;
+	}
+	else{
+		left = l;
+		right = r;
+		type = new Type(Error);
+	}
+
+
 }
 
 void Assign::print(){

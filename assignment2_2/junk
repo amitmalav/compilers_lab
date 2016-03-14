@@ -1,18 +1,8 @@
-(Block [(Ass (Assign (Id "i") (Member (Array (Id "a") (IntConst 1)) (Id "k")))) (Return (IntConst 1))])
-(Empty)(Block [])
+(Block [(Block [(Block [(Block [(Return (IntConst 1))])])])])
 
 
 
 
-Struct: S		struct		4
-Struct member: k		int		4		-4
-
-
-Function: a		int		-1
-Local vars: i		int		4		-8
-Local vars: ia		array(int, 1)		4		-4
-
-
-Function: main		int		-1
+Function: S		int		-1
 
 
