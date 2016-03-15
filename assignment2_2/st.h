@@ -19,10 +19,12 @@ public:
 	Basetype base;
 	string structType;
 	int num_type_pointers;
+	int check; //1 for &, 2 for *, 3 for - or !, funcall
 	Type();
 	Type(Kind);
 	Type(Kind, Basetype);
 	Type(Kind,Basetype, string);
+	Type* copy();
 	bool equal(Type*);
 	string getType();
 	int size();
@@ -40,6 +42,7 @@ public:
 	Type* idType;
 	int numPointers;
 	SymbolTableEntry();
+	SymbolTableEntry(int addr);
 	int size();
 	void print();
 };
@@ -55,6 +58,9 @@ public:
 	int isStruct;
 	int size();
 	void print();
+	bool checkScope(string);
+	Type* getType(string);
+	Type * getParaByInd(int);
 	SymbolTable();
 };
 

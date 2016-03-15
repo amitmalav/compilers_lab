@@ -13,6 +13,7 @@ Type* retType;
 GlobalTable *gtable = new GlobalTable();
 int pusharraysize = 0;
 int isConstant = 0;
+int paddr= 0;
 
 string gettype[] = {
 	"int",
@@ -27,19 +28,32 @@ Type::Type(){}
 Type::Type(Kind tag){
 	this->typeKind = tag;
 	num_type_pointers = 0;
+	check = 0;
 }
 Type::Type(Kind tag, Basetype basetype){
 	this->typeKind = tag;
 	this->base = basetype;
 	num_type_pointers = 0;
+	check = 0;
 }
 Type::Type(Kind tag, Basetype basetype, string structtype){
 	this->typeKind = tag;
 	this->base = basetype;
 	this->structType = structtype;
 	num_type_pointers = 0;
+	check = 0;
 }
-
+Type* Type::copy(){
+	Type * copied = new Type(typeKind, base);
+	copied->check = check;
+	if (typeKind == Pointer) copied->num_type_pointers = num_type_pointers;
+	if(typeKind == Base){
+		if(base == Struct){
+			copied->structType = structType;
+		}
+	}
+	return copied;
+}
 bool Type::equal(Type* t){
 	if(typeKind != t->typeKind)return false;
 	if(typeKind == Base){
@@ -51,9 +65,12 @@ bool Type::equal(Type* t){
 	}
 	if(typeKind == Pointer){
 		if(this->getType() != t->getType()){
-			if(this->getType() == "void"){
-				if(this->num_type_pointers == 1)return true;
-				else return false;
+
+			if((this->getType() == "void")&&(t->getType() != "void")){
+				return (this->num_type_pointers == 1);
+			}
+			if((this->getType() != "void")&&(t->getType() == "void")){
+				return (t->num_type_pointers == 1);
 			}
 			else return false;
 		}
@@ -96,6 +113,9 @@ string Type::getType(){
 
 //symbol table entry
 SymbolTableEntry::SymbolTableEntry(){}
+SymbolTableEntry::SymbolTableEntry(int addr){
+	this->addr = addr;
+}
 int SymbolTableEntry::size(){
 	int ssize = 1;
 	if(isArray == 1){
@@ -171,6 +191,30 @@ int SymbolTable::size(){
 	}
 	else return -1;
 };
+
+bool SymbolTable::checkScope(string var){
+	if (parameters.find(var)!=parameters.end() || localvars.find(var)!=localvars.end())
+		return true;
+	else return false;
+}
+
+Type* SymbolTable::getType(string var){
+	if (parameters.find(var) != parameters.end())
+		return parameters[var]->idType;
+	else if(localvars.find(var) != localvars.end()){
+		return localvars[var]->idType;	
+	}
+}
+
+Type * SymbolTable::getParaByInd(int i) {
+	for (map<string, SymbolTableEntry*>::iterator it = parameters.begin(); it != parameters.end(); it++) {
+		if ((it->second)->addr == i) {
+			return (it->second)->idType;
+		}
+	}
+}
+
+
 void SymbolTable::print(){
 	//sname, var/fun, para/local, size
 	if(isStruct == 1){

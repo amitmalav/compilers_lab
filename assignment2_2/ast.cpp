@@ -7,14 +7,36 @@ string get_enum[] = {
 	"OR",
 	"AND",
 	"EQ_OP",
+	"EQ_OP_INT",
+	"EQ_OP_FLOAT",
 	"NE_OP",
+	"NE_OP_INT",
+	"NE_OP_FLOAT",
 	"LT",
+	"LT_INT",
+	"LT_FLOAT",
 	"GT",
+	"GT_INT",
+	"GT_FLOAT",
 	"LE_OP",
+	"LE_OP_INT",
+	"LE_OP_FLOAT",
 	"GE_OP",
+	"GE_OP_INT",
+	"GE_OP_FLOAT",
+
 	"PLUS",
+	"PLUS_INT",
+	"PLUS_FLOAT",
 	"MINUS",
+	"MINUS_INT",
+	"MINUS_FLOAT",
 	"MULT",
+	"MULT_INT",
+	"MULT_FLOAT",
+	"DIV",
+	"DIV_INT",
+	"DIV_FLOAT",
 	"ASSIGN",
 	"PTR_OP",
 	"UMINUS",
@@ -188,9 +210,183 @@ OpBinary::OpBinary(opNameB op){
 	opName = op;
 }
 OpBinary::OpBinary(ExpAst*x, ExpAst*y, opNameB op){
-	left = x;
-	right = y;
+
 	opName = op;
+	if(op == OR || op == AND){
+		if((x->type->typeKind == Pointer) && (y->type->typeKind == Pointer)){
+			left = x;
+			right = y;
+			type = new Type(Kind::Base, Basetype::Int);
+			return;
+		}
+		if((x->type->typeKind == Pointer) && (y->type->typeKind != Pointer)){
+			if(y->type->base == Struct){
+				left = x;
+				right = y;
+				type = new Type(Error);
+				return;
+			}
+			else{
+				left = x;
+				right = y;
+				type = new Type(Kind::Base, Basetype::Int);
+				return;
+			}
+		}
+		if((x->type->typeKind != Pointer) && (y->type->typeKind == Pointer)){
+			if(x->type->base == Struct){
+				left = x;
+				right = y;
+				type = new Type(Error);
+				return;
+			}
+			else{
+				left = x;
+				right = y;
+				type = new Type(Kind::Base, Basetype::Int);
+				return;
+			}
+		}
+		if ((x->type->base == Int) && (y->type->base == Float)){
+			OpUnary *xf = new OpUnary(x, TO_FLOAT);
+			left = xf;
+			right = y;
+			type = new Type(Kind::Base, Basetype::Int);
+			return;
+		}
+		if ((x->type->base == Float) && (y->type->base == Int)){
+			OpUnary *xf = new OpUnary(y, TO_FLOAT);
+			left = x;
+			right = xf;
+			type = new Type(Kind::Base, Basetype::Int);
+			return;
+		}
+		if ((x->type->base == Int) && (y->type->base == Int)){
+			left = x;
+			right = y;
+			type = new Type(Kind::Base, Basetype::Int);
+			return;
+		}
+		if ((x->type->base == Float) && (y->type->base == Float)){
+			left = x;
+			right = y;
+			type = new Type(Kind::Base, Basetype::Int);
+			return;
+		}
+
+		else{
+			left = x;
+			right = y;
+			type = new Type(Error);
+			return;
+		}
+
+	}
+	if(op == EQ_OP || op == NE_OP || op == LT || op == GE || op == LT_OP || op == GE_OP){
+		if((x->type->typeKind == Pointer) && (y->type->typeKind == Pointer)){
+			if(x->type->getType() == y->type->getType()){
+				if(x->type->num_type_pointers == y->type->num_type_pointers){
+					left = x;
+					right = y;
+					type = new Type(Kind::Base, Basetype::Int);
+					return;
+				}
+			}
+			left = x;
+			right = y;
+			type = new Type(Error);
+			return;
+		}
+
+		if ((x->type->base == Int) && (y->type->base == Float)){
+			OpUnary *xf = new OpUnary(x, TO_FLOAT);
+			opName = (opNameB)((int)op+2);
+			left = xf;
+			right = y;
+			type = new Type(Kind::Base, Basetype::Int);
+			return;
+		}
+		if ((x->type->base == Float) && (y->type->base == Int)){
+			OpUnary *xf = new OpUnary(y, TO_FLOAT);
+			opName = (opNameB)((int)op+2);
+			left = x;
+			right = xf;
+			type = new Type(Kind::Base, Basetype::Int);
+			return;
+		}
+		if ((x->type->base == Int) && (y->type->base == Int)){
+			opName = (opNameB)((int)op+1);
+			left = x;
+			right = y;
+			type = new Type(Kind::Base, Basetype::Int);
+			return;
+		}
+		if ((x->type->base == Float) && (y->type->base == Float)){
+			opName = (opNameB)((int)op+2);
+			left = x;
+			right = y;
+			type = new Type(Kind::Base, Basetype::Int);
+			return;
+		}
+
+		else{
+			left = x;
+			right = y;
+			type = new Type(Error);
+			return;
+		}
+
+	}
+	if(op == PLUS || op== MINUS || op== MULT || op== DIV){
+		if((x->type->typeKind == Base) && (y->type->typeKind == Base)){
+			if ((x->type->base == Int) && (y->type->base == Float)){
+				OpUnary *xf = new OpUnary(x, TO_FLOAT);
+				opName = (opNameB)((int)op+2);
+				left = xf;
+				right = y;
+				type = y->type;
+				return;
+			}
+			if ((x->type->base == Float) && (y->type->base == Int)){
+				OpUnary *xf = new OpUnary(y, TO_FLOAT);
+				opName = (opNameB)((int)op+2);
+				left = x;
+				right = xf;
+				type = x->type;
+				return;
+			}
+			if ((x->type->base == Int) && (y->type->base == Int)){
+				opName = (opNameB)((int)op+1);
+				left = x;
+				right = y;
+				type = x->type;
+				return;
+			}
+			if ((x->type->base == Float) && (y->type->base == Float)){
+				opName = (opNameB)((int)op+2);
+				left = x;
+				right = y;
+				type = x->type;
+				return;
+			}
+		}
+		left = x;
+		right = y;
+		type = new Type(Error);
+		return;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 void OpBinary::print(){
@@ -206,6 +402,17 @@ void OpBinary::print(){
 OpUnary::OpUnary(){}
 OpUnary::OpUnary(opNameU op){
 	opName = op;
+	type = new Type(Ok);
+	if(op == UMINUS || op == NOT){
+		type->check = 3;
+	}
+	if(op == DEREF){
+		type->check = 1;
+	}
+	if(op == POINTER){
+		type->check = 2;
+	}
+	
 }
 OpUnary::OpUnary(ExpAst* x, opNameU op) {
 	child = x;
@@ -214,7 +421,40 @@ OpUnary::OpUnary(ExpAst* x, opNameU op) {
 }
 OpUnary::OpUnary(ExpAst * x, OpUnary* y) {
 	opName = y->opName;
-	child = x;
+	if((y->opName == UMINUS) || (y->opName == NOT)){
+		child = x;
+		type = x->type;
+		type->check = 3;
+		return;
+	}
+	if(y->opName == POINTER){
+		if(x->type->typeKind != Pointer){
+			child = x;
+			type = new Type(Error);
+			return;
+		}
+		type = x->type->copy();
+		type->check = 2;
+		if(type->num_type_pointers == 1){
+			if(type->base == Void){
+				child = x;
+				type = new Type(Error);
+				return;
+			}
+			type->typeKind = Base;
+			child = x;
+			return;
+		}
+	}
+	if(y->opName == DEREF){
+		child = x;
+		type = x->type->copy();
+		type->check = 1;
+		type->num_type_pointers += 1;
+		if(x->type->typeKind != Pointer)x->type->typeKind = Pointer;
+		return;
+	}
+
 }
 void OpUnary::print(){
 	cout<<"("<< get_enum[opName] << " ";
@@ -231,7 +471,7 @@ Assign::Assign(ExpAst* l, ExpAst* r){
 		type = l->type;
 	}
 
-	else if ((l->type->typeKind != Base) &&(r->type->typeKind != Base)) {
+	else if (!((l->type->typeKind == Base) &&(r->type->typeKind == Base))) {
 		type = new Type(Error);
 		left = l;
 		right = r;
@@ -254,8 +494,6 @@ Assign::Assign(ExpAst* l, ExpAst* r){
 		right = r;
 		type = new Type(Error);
 	}
-
-
 }
 
 void Assign::print(){

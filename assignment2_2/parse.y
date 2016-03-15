@@ -67,6 +67,7 @@ function_definition
 			stable->numPointers = 0;
 			stable->isStruct = 0;
 			offset = 0;
+			paddr = 0;
 		} 
 		fun_declarator
 		{
@@ -146,7 +147,7 @@ parameter_list
 parameter_declaration
 		: type_specifier
 		{
-			ptable = new SymbolTableEntry();
+			ptable = new SymbolTableEntry(addr);
 			ptable->idType = $1;
 			ptable->numPointers = 0;
 			ptable->isArray = 0;
@@ -183,6 +184,7 @@ parameter_declaration
 
 			offset += ptable->size();
 			ptable->offset = offset;
+			addr += 1; 
 			paraMap[ptable->name] = $3;
 		}
 	    ;
@@ -219,20 +221,28 @@ primary_expression              // The smallest expressions, need not have a l_v
       
     	: IDENTIFIER{
     		$$ = new Identifier($1);
+    		if(!stable->checkScope($1)){
+				cout<<"Error:: On line "<<d_scanner.lineNr()<<", Undeclared variable '"<<$1<<"' "<<endl;
+				exit(0);			
+			}
+    		$$->type = stable->getType($1);
     		isConstant = 0;
     	}           // primary expression has IDENTIFIER now
 	    | INT_CONSTANT{
 	    	pusharraysize = $1;
 	    	$$ = new IntConst($1);
+	    	$$->type = new Type(Base, Int);
 	    	isConstant = 1;
 	    }
 	    | FLOAT_CONSTANT{
 	    	pusharraysize = $1;
 	    	$$ = new FloatConst($1);
+	    	$$->type = new Type(Base, Float);
 	    	isConstant = 0;
 	    }
 	    | STRING_LITERAL{
 	    	$$ = new StringConst($1);
+	    	$$->type = new Type(Base, Void);
 	    	isConstant = 0;
 	    }
 	    | '(' expression ')'{
@@ -289,7 +299,7 @@ statement
 
 assignment_statement
 		: ';'{
-			$$ = new Ass();	//??
+			$$ = new Ass();	//type??
 		}						
 		|  expression ';'{
 			$$ = new Ass($1);// type??
@@ -301,6 +311,10 @@ expression                                   //assignment expressions are right 
         	$$ = $1;
         }
         |  unary_expression '=' expression{
+        	if(($1->type->check == 1) || ($1->type->check == 3)){
+        		cout<<"Error:: On line "<<d_scanner.lineNr()<<", Only * can appear on left of = "<<endl;	
+				exit(0);
+        	}
         	$$ = new Assign($1, $3);
         	if ($$->type->typeKind == Error){
 				cout<<"Error:: On line "<<d_scanner.lineNr()<<", Assignment of Incompatible types."<<endl;	
@@ -316,6 +330,10 @@ logical_or_expression            // The usual hierarchy that starts here...
 		}
 	    | logical_or_expression OR_OP logical_and_expression{
 	    	$$ = new OpBinary($1, $3, opNameB::OR);
+	    	if ($$->type->typeKind == Error){
+				cout<<"Error:: On line "<<d_scanner.lineNr()<<", OR operation on Incompatible types."<<endl;	
+				exit(0);		
+			}
 	    }
 		;
 logical_and_expression
@@ -324,7 +342,11 @@ logical_and_expression
 	    }
 	    | logical_and_expression AND_OP equality_expression{
 	    	$$ = new OpBinary($1, $3, opNameB::AND);
-	    } 
+	    	if ($$->type->typeKind == Error){
+				cout<<"Error:: On line "<<d_scanner.lineNr()<<", AND operation on Incompatible types."<<endl;	
+				exit(0);		
+			}
+	    }
 		;
 
 equality_expression
@@ -333,9 +355,17 @@ equality_expression
 		}
 	    | equality_expression EQ_OP relational_expression{
 	    	$$ = new OpBinary($1, $3, opNameB::EQ_OP);
+	    	if ($$->type->typeKind == Error){
+				cout<<"Error:: On line "<<d_scanner.lineNr()<<", \'==\' operation on Incompatible types."<<endl;	
+				exit(0);		
+			}
 	    }
 		| equality_expression NE_OP relational_expression{
 			$$ = new OpBinary($1, $3, opNameB::NE_OP);
+			if ($$->type->typeKind == Error){
+				cout<<"Error:: On line "<<d_scanner.lineNr()<<", \'!=\' operation on Incompatible types."<<endl;	
+				exit(0);		
+			}
 		}
 		;
 relational_expression
@@ -344,15 +374,35 @@ relational_expression
 		}
         | relational_expression '<' additive_expression{
         	$$ = new OpBinary($1, $3, opNameB::LT);
+        	if ($$->type->typeKind == Error){
+				cout<<"Error:: On line "<<d_scanner.lineNr()<<", \'<\' operation on Incompatible types."<<endl;	
+				exit(0);		
+			}
+
         } 
 		| relational_expression '>' additive_expression{
 			$$ = new OpBinary($1, $3, opNameB::GT);
+			if ($$->type->typeKind == Error){
+				cout<<"Error:: On line "<<d_scanner.lineNr()<<", \'>\' operation on Incompatible types."<<endl;	
+				exit(0);		
+			}
+
 		}
 		| relational_expression LE_OP additive_expression{
 			$$ = new OpBinary($1, $3, opNameB::LE_OP);
+			if ($$->type->typeKind == Error){
+				cout<<"Error:: On line "<<d_scanner.lineNr()<<", \'<=\' operation on Incompatible types."<<endl;	
+				exit(0);		
+			}
+
 		}
         | relational_expression GE_OP additive_expression{
         	$$ = new OpBinary($1, $3, opNameB::GE_OP);
+        	if ($$->type->typeKind == Error){
+				cout<<"Error:: On line "<<d_scanner.lineNr()<<", \'>=\' operation on Incompatible types."<<endl;	
+				exit(0);		
+			}
+
         } 
 		;
 
@@ -362,9 +412,17 @@ additive_expression
 		}
 		| additive_expression '+' multiplicative_expression{
 			$$ = new OpBinary($1, $3, opNameB::PLUS);
+			if ($$->type->typeKind == Error){
+				cout<<"Error:: On line "<<d_scanner.lineNr()<<", \'+\' operation on Incompatible types."<<endl;	
+				exit(0);		
+			}
 		}
 		| additive_expression '-' multiplicative_expression{
 			$$ = new OpBinary($1, $3, opNameB::MINUS);
+			if ($$->type->typeKind == Error){
+				cout<<"Error:: On line "<<d_scanner.lineNr()<<", \'-\' operation on Incompatible types."<<endl;	
+				exit(0);		
+			}
 		}
 		;
 
@@ -374,17 +432,33 @@ multiplicative_expression
 		}
 		| multiplicative_expression '*' unary_expression{
 			$$ = new OpBinary($1, $3, opNameB::MULT);
+			if ($$->type->typeKind == Error){
+				cout<<"Error:: On line "<<d_scanner.lineNr()<<", \'*\' operation on Incompatible types."<<endl;	
+				exit(0);		
+			}
 		}
 		| multiplicative_expression '/' unary_expression{
-			$$ = new OpBinary($1, $3, opNameB::MULT);
+			$$ = new OpBinary($1, $3, opNameB::DIV);
+			if ($$->type->typeKind == Error){
+				cout<<"Error:: On line "<<d_scanner.lineNr()<<", \'/\' operation on Incompatible types."<<endl;	
+				exit(0);		
+			}
 		}
 		;
+
+//done till here
+
+
 unary_expression
 		: postfix_expression{
 			$$ = $1;
 		}			
 		| unary_operator unary_expression{
 			$$ = new OpUnary($2, (OpUnary*)$1);
+			if ($$->type->typeKind == Error){
+				cout<<"Error:: On line "<<d_scanner.lineNr()<<", Incompatible unary operation."<<endl;	
+				exit(0);		
+			}
 		}  // unary_operator can only be '*' on the LHS of '='
 		;                                     // you have to enforce this during semantic analysis
 
@@ -394,11 +468,54 @@ postfix_expression
 		}  				
         | IDENTIFIER '(' ')'{
         	$$ = new Funcall(new Identifier($1));
+        	if (gtable->funsymtable.find($1) == gtable->funsymtable.end()) {
+				cout << "Error:: On line " << d_scanner.lineNr() << " Function " << $1 << " is not defined." << endl;
+				exit(0);
+			}
+
+			else {
+				SymbolTable * calledst = gtable->funsymtable[$1];
+				if (calledst->parameters.size() != 0){
+					cout << "Error:: On line " << d_scanner.lineNr() << " Function " << $1 << " has " << calledst->parameters.size() << " parameters, " << " 0 given." << endl;
+					exit(0);
+				}
+			}
+			//valid function call
+			$$->type = gtable->funsymtable[$1]->retType;
+			$$->type->check = 3;
         } 				    // Cannot appear on the LHS of '='. Enforce this.
+
+
+
 	    | IDENTIFIER '(' expression_list ')'{
 	    	((Funcall*)$3)->children.insert(((Funcall*)$3)->children.begin(), new Identifier($1));
 			$$ = $3;
+
+			Funcall *fc = (Funcall *) $$;
+			if (gtable->funsymtable.find($1) == gtable->funsymtable.end()) {
+				cout << "Error:: On line " << d_scanner.lineNr() << " Function " << $1 << " is not defined." << endl;
+				exit(0);
+			}
+			else {
+				SymbolTable * calledst = gtable->funsymtable[$1];
+				if (fc->children.size() - 1 != calledst->parameters.size()){
+					cout << "Error:: On line " << d_scanner.lineNr() << " Function " << $1 << " has " << calledst->parameters.size() << " parameters, " << fc->children.size() - 1 << " given." << endl;
+					exit(0);
+				}
+				else{
+					for (int i = 1; i < fc->children.size(); i++){
+					
+					}
+
+				}
+
+			}
+
+
 	    }    // Cannot appear on the LHS of '='  Enforce this.
+
+
+
         | postfix_expression '[' expression ']'{
         	$$ = new ArrayRef($1, $3);
         }
@@ -514,7 +631,15 @@ declarator_list
 				 	}
 					cout << "Error:: On line " << d_scanner.lineNr() << " '"<< ptable->name <<"\' has a previous declaration as \'"<< tmp << " " <<ptable->name << "\'"<< endl;
 					exit(0);
-
+			}
+			pit = paramerers.find(ptable->name);
+			if(pit != paramerers.end()){
+					string tmp = pit->second->idType->getType();
+				 	for(int i = 0; i < pit->second->numPointers; i++){
+				 		tmp = tmp + "*";
+				 	}
+					cout << "Error:: On line " << d_scanner.lineNr() << " '"<< ptable->name <<"\' has a previous declaration as \'"<< tmp << " " <<ptable->name << "\'"<< endl;
+					exit(0);
 			}
 
 
@@ -568,6 +693,15 @@ declarator_list
 					cout << "Error:: On line " << d_scanner.lineNr() << " '"<< ptable->name <<"\' has a previous declaration as \'"<< tmp << " " <<ptable->name << "\'"<< endl;
 					exit(0);
 
+			}
+			pit = paramerers.find(ptable->name);
+			if(pit != paramerers.end()){
+					string tmp = pit->second->idType->getType();
+				 	for(int i = 0; i < pit->second->numPointers; i++){
+				 		tmp = tmp + "*";
+				 	}
+					cout << "Error:: On line " << d_scanner.lineNr() << " '"<< ptable->name <<"\' has a previous declaration as \'"<< tmp << " " <<ptable->name << "\'"<< endl;
+					exit(0);
 			}
 
 			paraMap[ptable->name] = ptable;

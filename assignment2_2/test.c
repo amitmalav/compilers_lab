@@ -1,9 +1,17 @@
+#include <stdio.h>
+struct p{
+	int *x;
+	float *y;
+	void *z;
+};
+
 struct A{
 	int k;
 };
 struct A* a(){
-	void **bla;
+	struct A*bla;
 	return bla;
 }
 int main(){
+	int p;
 }
