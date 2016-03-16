@@ -18,7 +18,7 @@ int main() {
     struct s x;
     struct t y;
     int i;
-    f(c, x.b); //Allowed. as int *c[5] and int * a[10] are compatible. Also, float b[5][5] and float b[8][5] are compatible.
-    f(c, a); // Error. float b[8][5] and float a[10][10] are incompatible.
+    // f(c, x.b); //Allowed. as int *c[5] and int * a[10] are compatible. Also, float b[5][5] and float b[8][5] are compatible.
+    // f(c, a); // Error. float b[8][5] and float a[10][10] are incompatible.
     y.x[i].b[2] = x.b[1]; // Error. Assigning whole arrays.
 }

@@ -51,7 +51,6 @@ Type* Type::copy(){
 	Type * copied = new Type(typeKind, base);
 	copied->check = check;
 	copied->isArray = isArray;
-	copied->arrayVector = arrayVector;
 	if (typeKind == Pointer){
 		if(base == Struct){
 			copied->structType = structType;
@@ -66,7 +65,7 @@ Type* Type::copy(){
 	return copied;
 }
 bool Type::equal(Type* t){
-	// int assign = 0;
+	int assign = 0;
 	if(typeKind != t->typeKind)return false;
 	if(typeKind == Base){
 		// if(!((this->getType() != "int" || this->getType() != "float")&& (t->getType() != "int" || t->getType() != "float"))){
@@ -77,12 +76,7 @@ bool Type::equal(Type* t){
 	}
 	if(typeKind == Pointer){
 		//cout << "blah0"<<endl;
-		int a, b;
-		a = arrayVector.size();
-		b = t->arrayVector.size();
-		std::vector <int> c = arrayVector;
-		std::vector <int> d = t->arrayVector;
-
+		if(assign == 1)if(isArray == 1 && t->isArray == 1)return false;
 		if(this->getType() != t->getType()){
 
 			if((this->getType() == "void")&&(t->getType() != "void")){
@@ -94,29 +88,7 @@ bool Type::equal(Type* t){
 			else return false;
 		}
 		else{
-			// return this->num_type_pointers == t->num_type_pointers;
-			if(this->num_type_pointers == t->num_type_pointers){
-				if(a <= 1){
-					if(b > 1)return false;
-					else return true;
-				}
-				if(b <= 1){
-					if(a > 1)return false;
-					else return true;
-				}
-				if(!(a == b))return false;
-				c.erase(c.begin());
-				d.erase(d.begin());
-				if(c!=d)return false;
-				return true;
-			}
-
-
-
-
-
-
-
+			return (this->num_type_pointers == t->num_type_pointers);
 		}
 	}
 	return true;

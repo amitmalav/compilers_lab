@@ -219,7 +219,6 @@ declarator
 			ptable->idType->typeKind = Pointer;
 			ptable->idType->isArray = 1;
 			ptable->arrayVector.push_back((int)pusharraysize);
-			ptable->idType->arrayVector.push_back((int)pusharraysize);
 		} // check separately that it is a constant //  yet to be done
         | '*'
         {
@@ -345,7 +344,7 @@ expression                                   //assignment expressions are right 
 				exit(0);
         	}
         	if(($1->type->check == 1) || ($1->type->check == 3)){
-        		cout<<"Error:: On line "<<d_scanner.lineNr()<<", lvalue required as left operand of assignment"<<endl;	
+        		cout<<"Error:: On line "<<d_scanner.lineNr()<<", Only * can appear on left of = "<<endl;	
 				exit(0);
         	}
         	if($1->lvalue == 0){
@@ -647,11 +646,9 @@ postfix_expression
 
         	int tm = $1->lvalue;
         	//cout << $1->type->getType() << " " <<$1->type->num_type_pointers<< " "<< $1->type->isArray << $1->type->base<< $1->type->typeKind<<endl;
-        	//Type *t = $1->type;
-        	Type *t = $1->type->copy();
+        	Type *t = $1->type;
         	$$ = new ArrayRef($1, $3);
         	$$->type = t->copy();
-        	if($$->type->arrayVector.size() > 0)$$->type->arrayVector.erase($$->type->arrayVector.begin());
 
         	if($$->type->typeKind != Pointer){
         		cout << "Error:: On line " << d_scanner.lineNr() << " subscripted value is neither array nor pointer" << endl;
@@ -715,7 +712,7 @@ postfix_expression
 				exit(0);
 	    	}
 	    	$$ = new OpUnary($1, opNameU::PP);
-	    	//cout << $1->type->check<<endl;
+	    	cout << $1->type->check<<endl;
 	    	$$->lvalue = tm;
 	    } 	       // Cannot appear on the LHS of '='   Enforce this
 		;

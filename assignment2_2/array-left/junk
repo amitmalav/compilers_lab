@@ -1,0 +1,29 @@
+(Block [(Return (Array (Id "b") (IntConst 0)))])
+(Block [(Assign (Array (Member (Array (Member (Id "y") (Id "x")) (Id "i")) (Id "b")) (IntConst 2)) (Array (Member (Id "x") (Id "b")) (IntConst 1)))])
+
+
+
+
+Struct: s		struct		104
+Struct member: a		int		4		-4
+Struct member: b		array(array(float, 5), 5)		100		-104
+
+
+Struct: t		struct		1040
+Struct member: x		array(s, 10)		1040		-1040
+
+
+Function: f		float*		-1
+Function para: a		array(int*, 10)		40		40
+Function para: b		array(array(float, 8), 5)		160		200
+
+
+Function: main		int		-1
+Local vars: a		array(array(float, 10), 10)		400		-400
+Local vars: b		array(array(int, 10), 10)		400		-800
+Local vars: c		array(int*, 5)		20		-820
+Local vars: i		int		4		-1968
+Local vars: x		s		104		-924
+Local vars: y		t		1040		-1964
+
+

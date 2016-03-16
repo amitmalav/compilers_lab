@@ -1,0 +1,6 @@
+(Block [(Return (Array (Id "b") (IntConst 0)))])
+int121
+int121
+float121
+float111
+Error:: On line 21 Parameter 2 of Function f has wrong type.

@@ -1,20 +1,19 @@
-int returnInt () {
-    return 1;
+struct abc
+{
+    int a;
+    float b;
+};
+
+void func(int x, float *y)
+{
+    ;    
 }
 
-int main() {
-    int a;
-    int b;
-    int c[3];
-
-    a = 2;
-    b = 4;
-	1 = 1;
-    // &a = &b; // This is not allowed
-	
-    // *(&a) = b; 
-
-    // c[ "Compilers" ] = 4; // This is not allowed
-
-    // c[ returnInt() ] = 1;
+int main()
+{
+    float a;
+    int c[10];
+    struct abc d[5];
+    void* x;
+    ;
 }
