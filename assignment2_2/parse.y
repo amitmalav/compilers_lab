@@ -147,7 +147,7 @@ parameter_list
 parameter_declaration
 		: type_specifier
 		{
-			ptable = new SymbolTableEntry(addr);
+			ptable = new SymbolTableEntry(paddr);
 			ptable->idType = $1;
 			ptable->numPointers = 0;
 			ptable->isArray = 0;
@@ -164,7 +164,11 @@ parameter_declaration
 			map <string, SymbolTableEntry*>::iterator pit = paraMap.find(ptable->name);
 			if(pit != paraMap.end()){
 					string tmp = pit->second->idType->getType();
-				 	for(int i = 0; i < pit->second->numPointers; i++){
+				 	int t;
+					if(pit->second->isArray = 1){
+						t = pit->second->numPointers - pit->second->arrayVector.size();
+					}
+				 	for(int i = 0; i < t; i++){
 				 		tmp = tmp + "*";
 				 	}
 					cout << "Error:: On line " << d_scanner.lineNr() << " '"<< ptable->name <<"\' has a previous declaration as \'"<< tmp << " " <<ptable->name << "\'"<< endl;
@@ -184,7 +188,7 @@ parameter_declaration
 
 			offset += ptable->size();
 			ptable->offset = offset;
-			addr += 1; 
+			paddr += 1; 
 			paraMap[ptable->name] = $3;
 		}
 	    ;
@@ -202,7 +206,12 @@ declarator
 				cout << "Error:: On line " << d_scanner.lineNr() << ": only int constants are allowed inside array expression" << endl;
 				exit(0);
 			}
+
 			ptable->isArray = 1;
+			ptable->numPointers++;
+			ptable->idType->num_type_pointers++;
+			ptable->idType->typeKind = Pointer;
+			ptable->idType->isArray = 1;
 			ptable->arrayVector.push_back((int)pusharraysize);
 		} // check separately that it is a constant //  yet to be done
         | '*'
@@ -220,11 +229,12 @@ declarator
 primary_expression              // The smallest expressions, need not have a l_value
       
     	: IDENTIFIER{
-    		$$ = new Identifier($1);
     		if(!stable->checkScope($1)){
 				cout<<"Error:: On line "<<d_scanner.lineNr()<<", Undeclared variable '"<<$1<<"' "<<endl;
 				exit(0);			
 			}
+			
+    		$$ = new Identifier($1);
     		$$->type = stable->getType($1);
     		isConstant = 0;
     	}           // primary expression has IDENTIFIER now
@@ -289,6 +299,7 @@ statement
 			$$ = $1;
 		}
 	    | RETURN expression ';'{
+
 	    	$$ = new Return($2, stable->retType);
 	    	if ($$->type->typeKind == Error){
 				cout<<"Error:: On line "<<d_scanner.lineNr()<<", Incompatible return type."<<endl;	
@@ -315,6 +326,7 @@ expression                                   //assignment expressions are right 
         		cout<<"Error:: On line "<<d_scanner.lineNr()<<", Only * can appear on left of = "<<endl;	
 				exit(0);
         	}
+        	//cout << $1->type->getType() << "  "<< $3->type->getType() << endl;
         	$$ = new Assign($1, $3);
         	if ($$->type->typeKind == Error){
 				cout<<"Error:: On line "<<d_scanner.lineNr()<<", Assignment of Incompatible types."<<endl;	
@@ -464,67 +476,165 @@ unary_expression
 
 postfix_expression
 		: primary_expression{
+			//cout << $1->type->getType() << " " <<$1->type->num_type_pointers<< " "<< $1->type->isArray<<endl;
 			$$ = $1;
 		}  				
         | IDENTIFIER '(' ')'{
         	$$ = new Funcall(new Identifier($1));
         	if (gtable->funsymtable.find($1) == gtable->funsymtable.end()) {
-				cout << "Error:: On line " << d_scanner.lineNr() << " Function " << $1 << " is not defined." << endl;
-				exit(0);
+				if($1 != stable->entryName){
+					cout << "Error:: On line " << d_scanner.lineNr() << " Function " << $1 << " is not defined." << endl;
+					exit(0);
+				}
 			}
 
 			else {
-				SymbolTable * calledst = gtable->funsymtable[$1];
+				SymbolTable*calledst;
+				if($1 == stable->entryName){
+					calledst = stable;
+				}
+				else {
+					calledst = gtable->funsymtable[$1];
+				}
 				if (calledst->parameters.size() != 0){
 					cout << "Error:: On line " << d_scanner.lineNr() << " Function " << $1 << " has " << calledst->parameters.size() << " parameters, " << " 0 given." << endl;
 					exit(0);
 				}
 			}
 			//valid function call
-			$$->type = gtable->funsymtable[$1]->retType;
-			$$->type->check = 3;
+			if($1 == stable->entryName){
+					$$->type = stable->retType;
+				}
+				else {
+					$$->type = gtable->funsymtable[$1]->retType;
+				}
+				$$->type->check = 3;
         } 				    // Cannot appear on the LHS of '='. Enforce this.
 
 
 
 	    | IDENTIFIER '(' expression_list ')'{
 	    	((Funcall*)$3)->children.insert(((Funcall*)$3)->children.begin(), new Identifier($1));
+			
 			$$ = $3;
-
 			Funcall *fc = (Funcall *) $$;
 			if (gtable->funsymtable.find($1) == gtable->funsymtable.end()) {
-				cout << "Error:: On line " << d_scanner.lineNr() << " Function " << $1 << " is not defined." << endl;
-				exit(0);
-			}
-			else {
-				SymbolTable * calledst = gtable->funsymtable[$1];
-				if (fc->children.size() - 1 != calledst->parameters.size()){
-					cout << "Error:: On line " << d_scanner.lineNr() << " Function " << $1 << " has " << calledst->parameters.size() << " parameters, " << fc->children.size() - 1 << " given." << endl;
+				if($1 != stable->entryName){
+					cout << "Error:: On line " << d_scanner.lineNr() << " Function " << $1 << " is not defined." << endl;
 					exit(0);
 				}
-				else{
-					for (int i = 1; i < fc->children.size(); i++){
-					
-					}
-
-				}
-
+			}
+			SymbolTable*calledst;
+			if($1 == stable->entryName){
+				calledst = stable;
+			}
+			else {
+				calledst = gtable->funsymtable[$1];
 			}
 
+			if (fc->children.size() - 1 != calledst->parameters.size()){
+				cout << "Error:: On line " << d_scanner.lineNr() << " Function " << $1 << " has " << calledst->parameters.size() << " parameters, " << fc->children.size() - 1 << " given." << endl;
+				exit(0);
+			}
+			else{
+				for (int i = 1; i < fc->children.size(); i++){
+					Type * actualtype = calledst->getParaByInd(i-1);
+					cout << fc->children[i]->type->getType()<<fc->children[i]->type->isArray<<fc->children[i]->type->num_type_pointers<<fc->children[i]->type->typeKind<<endl;
+					cout << actualtype->getType()<<actualtype->isArray<<actualtype->num_type_pointers<<actualtype->typeKind<<endl;
 
+					if(!(fc->children[i]->type)->equal(actualtype)){
+						//cout << fc->children[i]->type->getType()<<endl;
+						if(fc->children[i]->type->typeKind == Base && actualtype->typeKind == Base){
+							if (fc->children[i]->type->base == Int) {
+								OpUnary *xf = new OpUnary(fc->children[i], TO_FLOAT);
+								fc->children[i] = xf;
+							}
+							else if(fc->children[i]->type->base == Float) {
+								OpUnary *xf = new OpUnary(fc->children[i], TO_INT);
+								fc->children[i] = xf;
+							}
+							else{
+								cout << "Error:: On line " << d_scanner.lineNr() << " Parameter " << i << " of Function " << $1 << " has wrong type." << endl;
+								exit(0);
+							}
+
+						}
+						else{
+							cout << "Error:: On line " << d_scanner.lineNr() << " Parameter " << i << " of Function " << $1 << " has wrong type." << endl;
+							exit(0);
+						}
+					}
+
+
+				}
+				//Valid parameters
+				if($1 == stable->entryName){
+					$$->type = stable->retType;
+				}
+				else {
+					$$->type = gtable->funsymtable[$1]->retType;
+				}
+				$$->type->check = 3;
+
+			}
 	    }    // Cannot appear on the LHS of '='  Enforce this.
 
 
 
         | postfix_expression '[' expression ']'{
+        	
+        	if(!($3->type->typeKind == Base)&&($3->type->base == Int)){
+        		cout << "Error:: On line " << d_scanner.lineNr() << " Array subscript is not an integer" << endl;
+				exit(0);
+        	}
+        	Type *t = $1->type;
         	$$ = new ArrayRef($1, $3);
+        	$$->type = t;
+
+        	if($$->type->typeKind != Pointer){
+        		cout << "Error:: On line " << d_scanner.lineNr() << " subscripted value is neither array nor pointer" << endl;
+				exit(0);
+        	}
+
+        	$$->type->num_type_pointers--;
+        	if($$->type->num_type_pointers == 0){
+        		$$->type->typeKind = Base;
+        	}
         }
         | postfix_expression '.' IDENTIFIER{
+        	if(!(($1->type->typeKind == Base)&&($1->type->base == Struct))){
+        		cout << "Error:: On line " << d_scanner.lineNr() << "  request for member \'"<<$3 <<"\' in something not a structure" << endl;
+				exit(0);
+        	}
+        	map <string, SymbolTable*>::iterator it = gtable->strsymtable.find($1->type->structType);
+        	map <string, SymbolTableEntry*>::iterator pit = it->second->localvars.find($3);
+        	if(pit == it->second->localvars.end()){
+        		cout << "Error:: On line " << d_scanner.lineNr() << "  Struct \'"<<$1->type->structType <<"\' has no member named \'" <<$3<<"\'" << endl;
+				exit(0);
+        	}
         	$$ = new Member($1, new Identifier($3));
+        	$$->type = pit->second->idType->copy();
         }
+
         | postfix_expression PTR_OP IDENTIFIER{
         	$$ = new Arrow($1, new Identifier($3));
+        	if(!(($1->type->typeKind == Pointer)&&($1->type->base == Struct))){
+        		cout << "Error:: On line " << d_scanner.lineNr() << "  request for member \'"<<$3 <<"\' in something not a structure" << endl;
+				exit(0);
+        	}
+        	map <string, SymbolTable*>::iterator it = gtable->strsymtable.find($1->type->structType);
+        	map <string, SymbolTableEntry*>::iterator pit = it->second->localvars.find(ptable->name);
+        	if(pit == it->second->localvars.end()){
+        		cout << "Error:: On line " << d_scanner.lineNr() << "  Struct \'"<<$1->type->structType <<"\' has no member named \'" <<$3<<"\'" << endl;
+				exit(0);
+        	}
+        	if($1->type->num_type_pointers != 1){
+        		cout << "Error:: On line " << d_scanner.lineNr() << "  request for member \'"<<$3 <<"\' in something not a structure" << endl;
+				exit(0);
+        	}
+        	$$->type = pit->second->idType->copy();
         }
+
 	    | postfix_expression INC_OP{
 	    	$$ = new OpUnary($1, opNameU::PP);
 	    } 	       // Cannot appear on the LHS of '='   Enforce this
@@ -534,9 +644,11 @@ postfix_expression
 
 expression_list
         : expression{
+        	//cout << " bkenf "<< $1->type->getType()<<$1->type->isArray<<$1->type->num_type_pointers<<$1->type->typeKind<<endl;
         	$$ = new Funcall($1);
         }
         | expression_list ',' expression{
+       		// cout << " bkenf "<< $3->type->getType()<<$3->type->isArray<<$3->type->num_type_pointers<<$3->type->typeKind<<endl;
         	((Funcall*)$1)->children.push_back($3);
 			$$ = $1;
         }
@@ -626,16 +738,24 @@ declarator_list
 			map <string, SymbolTableEntry*>::iterator pit = paraMap.find(ptable->name);
 			if(pit != paraMap.end()){
 					string tmp = pit->second->idType->getType();
-				 	for(int i = 0; i < pit->second->numPointers; i++){
+				 	int t;
+					if(pit->second->isArray == 1){
+						t = pit->second->numPointers - pit->second->arrayVector.size();
+					}
+				 	for(int i = 0; i < t; i++){
 				 		tmp = tmp + "*";
 				 	}
 					cout << "Error:: On line " << d_scanner.lineNr() << " '"<< ptable->name <<"\' has a previous declaration as \'"<< tmp << " " <<ptable->name << "\'"<< endl;
 					exit(0);
 			}
-			pit = paramerers.find(ptable->name);
-			if(pit != paramerers.end()){
+			pit = stable->parameters.find(ptable->name);
+			if(pit != stable->parameters.end()){
 					string tmp = pit->second->idType->getType();
-				 	for(int i = 0; i < pit->second->numPointers; i++){
+				 	int t;
+					if(pit->second->isArray == 1){
+						t = pit->second->numPointers - pit->second->arrayVector.size();
+					}
+				 	for(int i = 0; i < t; i++){
 				 		tmp = tmp + "*";
 				 	}
 					cout << "Error:: On line " << d_scanner.lineNr() << " '"<< ptable->name <<"\' has a previous declaration as \'"<< tmp << " " <<ptable->name << "\'"<< endl;
@@ -687,17 +807,25 @@ declarator_list
 			map <string, SymbolTableEntry*>::iterator pit = paraMap.find(ptable->name);
 			if(pit != paraMap.end()){
 					string tmp = pit->second->idType->getType();
-				 	for(int i = 0; i < pit->second->numPointers; i++){
+					int t;
+					if(pit->second->isArray == 1){
+						t = pit->second->numPointers - pit->second->arrayVector.size();
+					}
+				 	for(int i = 0; i < t; i++){
 				 		tmp = tmp + "*";
 				 	}
 					cout << "Error:: On line " << d_scanner.lineNr() << " '"<< ptable->name <<"\' has a previous declaration as \'"<< tmp << " " <<ptable->name << "\'"<< endl;
 					exit(0);
 
 			}
-			pit = paramerers.find(ptable->name);
-			if(pit != paramerers.end()){
+			pit = stable->parameters.find(ptable->name);
+			if(pit != stable->parameters.end()){
 					string tmp = pit->second->idType->getType();
-				 	for(int i = 0; i < pit->second->numPointers; i++){
+				 	int t;
+					if(pit->second->isArray == 1){
+						t = pit->second->numPointers - pit->second->arrayVector.size();
+					}
+				 	for(int i = 0; i < t; i++){
 				 		tmp = tmp + "*";
 				 	}
 					cout << "Error:: On line " << d_scanner.lineNr() << " '"<< ptable->name <<"\' has a previous declaration as \'"<< tmp << " " <<ptable->name << "\'"<< endl;

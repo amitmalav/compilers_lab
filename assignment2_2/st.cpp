@@ -29,12 +29,14 @@ Type::Type(Kind tag){
 	this->typeKind = tag;
 	num_type_pointers = 0;
 	check = 0;
+	isArray = 0;
 }
 Type::Type(Kind tag, Basetype basetype){
 	this->typeKind = tag;
 	this->base = basetype;
 	num_type_pointers = 0;
 	check = 0;
+	isArray = 0;
 }
 Type::Type(Kind tag, Basetype basetype, string structtype){
 	this->typeKind = tag;
@@ -42,10 +44,12 @@ Type::Type(Kind tag, Basetype basetype, string structtype){
 	this->structType = structtype;
 	num_type_pointers = 0;
 	check = 0;
+	isArray = 0;
 }
 Type* Type::copy(){
 	Type * copied = new Type(typeKind, base);
 	copied->check = check;
+	copied->isArray = isArray;
 	if (typeKind == Pointer) copied->num_type_pointers = num_type_pointers;
 	if(typeKind == Base){
 		if(base == Struct){
@@ -64,6 +68,8 @@ bool Type::equal(Type* t){
 			return(this->getType() == t->getType());
 	}
 	if(typeKind == Pointer){
+		//cout << "blah0"<<endl;
+		// if(isArray == 1 || t->isArray == 1)return false;
 		if(this->getType() != t->getType()){
 
 			if((this->getType() == "void")&&(t->getType() != "void")){
@@ -84,14 +90,13 @@ bool Type::equal(Type* t){
 
 
 int Type::size(){
-	if(typeKind == Pointer){
+	if(typeKind == Pointer && isArray == 0){
 		return 4;
 	}
-	if (typeKind == Base ){
+	if (typeKind == Base  || ((typeKind == Pointer) &&(isArray = 1))){
 		if (base == Void)
 			return 0;
 		if(base == Struct){
-
 			map <string, SymbolTable*>::iterator it = gtable->strsymtable.find(structType);
 			if(it != gtable->strsymtable.end()){
 				return it->second->size();
@@ -119,7 +124,7 @@ SymbolTableEntry::SymbolTableEntry(int addr){
 int SymbolTableEntry::size(){
 	int ssize = 1;
 	if(isArray == 1){
-		for(std::vector<int>::iterator it = arrayVector.begin(); it != arrayVector.end(); it++){
+		for(std::vector<int>::iterator it = arrayVector.begin(); it != arrayVector.end(); ++it){
 			 ssize *= *it;
 		}
 		ssize *= idType->size();
@@ -138,7 +143,11 @@ void SymbolTableEntry::print(){
 			stringstream ss;
 			 if(it == arrayVector.begin()){
 			 	string tmp = idType->getType();
-			 	for(int i = 0; i < numPointers; i++){
+			 	int t;
+				if(isArray == 1){
+					t = numPointers - arrayVector.size();
+				}
+			 	for(int i = 0; i < t; i++){
 			 		tmp = tmp + "*";
 			 	}
 			 	ss << *it;

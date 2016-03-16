@@ -1,17 +1,19 @@
-#include <stdio.h>
-struct p{
-	int *x;
-	float *y;
-	void *z;
+struct abc
+{
+	int a;
+	float b;
 };
 
-struct A{
-	int k;
-};
-struct A* a(){
-	struct A*bla;
-	return bla;
+void func(int x, float *y)
+{
+	;    
 }
-int main(){
-	int p;
+
+int main()
+{
+	float a;
+	int c[10];
+	struct abc d[5];
+	void* x;
+	;
 }

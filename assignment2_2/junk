@@ -1,8 +1,23 @@
-(Block [(Block [(Block [(Block [(Return (IntConst 1))])])])])
+(Block [])
+(Block [])
 
 
 
 
-Function: S		int		-1
+Struct: abc		struct		8
+Struct member: a		int		4		-4
+Struct member: b		float		4		-8
+
+
+Function: func		void		-1
+Function para: x		int		4		4
+Function para: y		float*		4		8
+
+
+Function: main		int		-1
+Local vars: a		float		4		-4
+Local vars: c		array(int, 10)		40		-44
+Local vars: d		array(abc, 5)		40		-84
+Local vars: x		void*		4		-88
 
 

@@ -1,36 +1,58 @@
 #include <iostream>
 
-enum opNameB{OR=1,
-			 AND=2,
-			 EQ_OP=3,
-			 NE_OP=4,
-			 LT=5,
-       GT = 6,
-			 LE_OP=7,
-			 GE_OP=8,
-			 PLUS=9,
-			 MINUS=10,
-			 MULT=11,
-			 ASSIGN=12,
-       PTR_OP = 13,
-       OBJ_OP = 17
+enum opNameB{
+  OR = 1,
+  AND = 2,
+  EQ_OP = 3,
+  EQ_OP_INT = 4,
+  EQ_OP_FLOAT = 5,
+  NE_OP = 6,
+  NE_OP_INT = 7,
+  NE_OP_FLOAT = 8,
+  LT = 9,
+  LT_INT = 10,
+  LT_FLOAT = 11,
+  GT = 12,
+  GT_INT = 13,
+  GT_FLOAT = 14,
+  LE_OP = 15,
+  LE_OP_INT = 16,
+  LE_OP_FLOAT =17,
+  GE_OP = 18,
+  GE_OP_INT = 19,
+  GE_OP_FLOAT = 20,
+  PLUS = 21,
+  PLUS_INT = 22,
+  PLUS_FLOAT = 23,
+  MINUS = 24,
+  MINUS_INT = 25,
+  MINUS_FLOAT = 26,
+  MULT = 27,
+  MULT_INT = 28,
+  MULT_FLOAT = 29,
+  DIV = 30,
+  DIV_INT = 31,
+  DIV_FLOAT = 32,
+  PTR_OP = 33
 };
 
 
-enum opNameU{UMINUS=14,
-			 NOT=15,
-			 PP=16,
-			 DEREF = 18,
-			 POINTER = 19,
-       TO_FLOAT = 20,
-       TO_INT = 21
+enum opNameU{
+  UMINUS=34,
+			 NOT=35,
+			 PP=36,
+			 DEREF = 37,
+			 POINTER = 38,
+       TO_FLOAT = 39,
+       TO_INT = 40
 };
 
 
 class abstract_astnode{
 public:
-  virtual void print () = 0;
   Type* type;
+  virtual void print () = 0;
+  
   //virtual std::string generate_code(const symbolTable&) = 0;
   //virtual basic_types getType() = 0;
   //virtual bool checkTypeofAST() = 0;

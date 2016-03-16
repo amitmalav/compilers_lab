@@ -24,7 +24,6 @@ string get_enum[] = {
 	"GE_OP",
 	"GE_OP_INT",
 	"GE_OP_FLOAT",
-
 	"PLUS",
 	"PLUS_INT",
 	"PLUS_FLOAT",
@@ -37,12 +36,10 @@ string get_enum[] = {
 	"DIV",
 	"DIV_INT",
 	"DIV_FLOAT",
-	"ASSIGN",
 	"PTR_OP",
 	"UMINUS",
 	"NOT",
 	"PP",
-	"OBJ_OP",
 	"DEREF",
 	"POINTER",
 	"TO_FLOAT",
@@ -125,12 +122,12 @@ Return::Return(ExpAst* c, Type *t) {
 		type = new Type(Error);
 		child = c;
 	}
-	else if ((c->type->base == Int) && (t->type->base == Float)){
+	else if ((c->type->base == Int) && (t->base == Float)){
 		OpUnary *xf = new OpUnary(c, TO_FLOAT);
 		child = xf;
 		type = new Type(Ok);
 	}
-	else if ((c->type->base == Float) && (t->type->base == Int)){
+	else if ((c->type->base == Float) && (t->base == Int)){
 		OpUnary *xf = new OpUnary(c, TO_INT);
 		child = xf;
 		type = new Type(Ok);
@@ -282,7 +279,7 @@ OpBinary::OpBinary(ExpAst*x, ExpAst*y, opNameB op){
 		}
 
 	}
-	if(op == EQ_OP || op == NE_OP || op == LT || op == GE || op == LT_OP || op == GE_OP){
+	if(op == EQ_OP || op == NE_OP || op == LT || op == GT || op == LE_OP || op == GE_OP){
 		if((x->type->typeKind == Pointer) && (y->type->typeKind == Pointer)){
 			if(x->type->getType() == y->type->getType()){
 				if(x->type->num_type_pointers == y->type->num_type_pointers){
@@ -421,7 +418,7 @@ OpUnary::OpUnary(ExpAst* x, opNameU op) {
 }
 OpUnary::OpUnary(ExpAst * x, OpUnary* y) {
 	opName = y->opName;
-	if((y->opName == UMINUS) || (y->opName == NOT)){
+	if((y->opName == UMINUS) || (y->opName == NOT) || (y->opName == PP)){
 		child = x;
 		type = x->type;
 		type->check = 3;
@@ -445,6 +442,12 @@ OpUnary::OpUnary(ExpAst * x, OpUnary* y) {
 			child = x;
 			return;
 		}
+		else{
+			type->num_type_pointers--;
+			child = x;
+			return;
+		}
+
 	}
 	if(y->opName == DEREF){
 		child = x;
@@ -573,6 +576,7 @@ Member::Member() {}
 Member::Member(ExpAst* l, Identifier* r){
 	left = l;
 	right = r;
+
 }
 
 void Member::print(){
