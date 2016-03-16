@@ -14,7 +14,6 @@ GlobalTable *gtable = new GlobalTable();
 int pusharraysize = 0;
 int isConstant = 0;
 int paddr= 0;
-int lvalue = 0;
 
 string gettype[] = {
 	"int",
@@ -51,12 +50,7 @@ Type* Type::copy(){
 	Type * copied = new Type(typeKind, base);
 	copied->check = check;
 	copied->isArray = isArray;
-	if (typeKind == Pointer){
-		if(base == Struct){
-			copied->structType = structType;
-		}
-		copied->num_type_pointers = num_type_pointers;
-	}
+	if (typeKind == Pointer) copied->num_type_pointers = num_type_pointers;
 	if(typeKind == Base){
 		if(base == Struct){
 			copied->structType = structType;
@@ -75,7 +69,7 @@ bool Type::equal(Type* t){
 	}
 	if(typeKind == Pointer){
 		//cout << "blah0"<<endl;
-		if(isArray == 1 && t->isArray == 1)return false;
+		// if(isArray == 1 || t->isArray == 1)return false;
 		if(this->getType() != t->getType()){
 
 			if((this->getType() == "void")&&(t->getType() != "void")){
@@ -116,7 +110,6 @@ int Type::size(){
 string Type::getType(){
 	if (typeKind == Base|| typeKind == Pointer){
 		if(base == Struct){
-			//cout << "blah" <<structType << "bl"<<endl;
 			return structType;
 		}
 		return gettype[base];

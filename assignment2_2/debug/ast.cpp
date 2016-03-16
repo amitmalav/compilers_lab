@@ -413,17 +413,14 @@ OpUnary::OpUnary(opNameU op){
 }
 OpUnary::OpUnary(ExpAst* x, opNameU op) {
 	child = x;
-	type = x->type->copy();
+	type = x->type;
 	opName = op;
-	if(op == PP){
-		type->check = 3;
-	}
 }
 OpUnary::OpUnary(ExpAst * x, OpUnary* y) {
 	opName = y->opName;
 	if((y->opName == UMINUS) || (y->opName == NOT) || (y->opName == PP)){
 		child = x;
-		type = x->type->copy();
+		type = x->type;
 		type->check = 3;
 		return;
 	}
@@ -457,7 +454,7 @@ OpUnary::OpUnary(ExpAst * x, OpUnary* y) {
 		type = x->type->copy();
 		type->check = 1;
 		type->num_type_pointers += 1;
-		if(x->type->typeKind != Pointer)type->typeKind = Pointer;
+		if(x->type->typeKind != Pointer)x->type->typeKind = Pointer;
 		return;
 	}
 

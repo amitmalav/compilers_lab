@@ -20,7 +20,6 @@ public:
 	string structType;
 	int num_type_pointers;
 	int isArray;
-	std::vector <int> arrayVector;
 	int check; //1 for &, 2 for *, 3 for - or !, funcall
 	Type();
 	Type(Kind);
