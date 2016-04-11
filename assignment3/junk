@@ -1,0 +1,2 @@
+(Block [])
+Error:: On line 25 'a' has a previous declaration as 'int a'
