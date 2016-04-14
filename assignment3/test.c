@@ -1,22 +1,10 @@
-struct s {
-    int a;
-    float b;
-};
-struct t {
-    int a;
-    float b;
-};
-void f(int m, float n) {
-    struct s x;
-    struct s y;
-    struct t z;
+void f() {
     int p;
-    float q;
-    ;
+    int r;
+    int q;
+    int s;
+    p = 1;
+    q = 2;
+    r = 3;
+    s = p + q + r;
 }
-struct u {
-    struct s * a;
-    struct t * b;
-    struct u * c; 
-};
-

@@ -62,11 +62,15 @@ void BlockStmt::print(){
 	}
 	cout << "])";
 }
-
+void BlockStmt::code(){
+	for (int i = 0; i < children.size(); i++) {
+		children.at(i)->code();
+	}
+}
 void Empty::print(){
 	// cout << "(Empty)";
 }
-
+void Empty::code(){}
 
 //Seq
 
@@ -88,6 +92,11 @@ void Seq::print(){
 	}
 	cout << ")";
 }
+void Seq::code(){
+	for (int i = 0; i < children.size(); i++) {
+		children.at(i)->code();
+	}
+}
 
 //Assignment
 
@@ -107,6 +116,15 @@ void Ass::print(){
 	}
 	// cout << "(Ass ";
 	child-> print();
+	// cout << ")";
+}
+void Ass::code(){
+	if(empty){
+		// cout << "(Empty)";
+		return;
+	}
+	// cout << "(Ass ";
+	child-> code();
 	// cout << ")";
 }
 
@@ -143,7 +161,9 @@ void Return::print(){
 	child->print();
 	cout << ")";
 }
-
+void Return::code(){
+	child->code();
+}
 //If
 
 If::If(){}
@@ -162,6 +182,11 @@ void If::print(){
 	third->print();
 	cout << ")";
 }
+void If::code(){
+	first->code();
+	second->code();
+	third->code();
+}
 //While
 
 While::While() {}
@@ -177,7 +202,10 @@ void While::print(){
 	right->print();
 	cout << ")";
 }
-
+void While::code(){
+	left->code();
+	right->code();
+}
 //For
 
 For::For(){}
@@ -199,7 +227,12 @@ void For::print(){
 	child->print();
 	cout << ")";
 }
-
+void For::code(){
+	first->code();
+	second->code();
+	third->code();
+	child->code();
+}
 ////////////////////////////////////////////////////////
 
 OpBinary::OpBinary(){};
@@ -374,16 +407,6 @@ OpBinary::OpBinary(ExpAst*x, ExpAst*y, opNameB op){
 	}
 
 
-
-
-
-
-
-
-
-
-
-
 }
 
 void OpBinary::print(){
@@ -393,7 +416,21 @@ void OpBinary::print(){
   	right->print();
   	cout<<")";
 }
+void OpBinary::code(){
+	left->code();
+  	right->code();
+  	// cout << endl << " blah "<<opName<<endl;
 
+	cout << "lw $t1, 0($sp)" << endl <<
+			"lw $t2, 4($sp)" << endl;
+	if(opName == 22)cout << "add $t1, $t1, $t2" << endl;
+	if(opName == 25)cout << "sub $t1, $t1, $t2" << endl;
+	if(opName == 28)cout << "mult $t1, $t1, $t2" << endl;
+	if(opName == 31)cout << "div $t1, $t1, $t2" << endl;
+	cout << "addi $sp, $sp, 8" << endl <<
+			"addi $sp, $sp, -4" << endl <<
+			"sw $t1, 0($sp)" << endl;
+}
 //Unary operators
 
 OpUnary::OpUnary(){}
@@ -467,7 +504,9 @@ void OpUnary::print(){
   	child->print();
   	cout<<")";
 }
-
+void OpUnary::code(){
+	child->code();
+}
 //Assign
 Assign::Assign() {}
 Assign::Assign(ExpAst* l, ExpAst* r){
@@ -502,6 +541,8 @@ Assign::Assign(ExpAst* l, ExpAst* r){
 	}
 }
 
+
+
 void Assign::print(){
 	cout << "(Assign ";
 	left->print();
@@ -509,7 +550,20 @@ void Assign::print(){
 	right->print();
 	cout << ")";
 }
+void Assign::code(){
+	// cout << stable->entryName << endl;
+	// cout << left->is_right << endl << right->is_right << endl;
 
+	left->code();
+	right->code();
+	cout << "lw $t1, 0($sp)" << endl <<
+			"lw $t2, 4($sp)" << endl <<
+			"sw $t1, 0($t2)" << endl <<
+			"addi $sp, $sp, 8" << endl <<
+			"addi $sp, $sp, -4" << endl <<
+			"sw $t1, 0($sp)" << endl;
+
+}
 //Function calls
 
 Funcall::Funcall(){}
@@ -527,7 +581,12 @@ void Funcall::print(){
     }
   	cout << ")";
 }
-
+void Funcall::code(){
+	for(int i = 0; i < children.size(); i++){
+    children[i]->code();
+    if (i < (children.size() - 1)) cout << " ";
+    }
+}
 
 //Pointer
 
@@ -540,7 +599,9 @@ void Pointer::print(){
 	child->print();
 	cout <<")";
 }
-
+void Pointer::code(){
+	child->code();
+}
 
 //Float Constants
 
@@ -550,12 +611,18 @@ FloatConst::FloatConst(float x){
 void FloatConst::print(){
 	cout << "(FloatConst "<< child << ")";
 }
-
+void FloatConst::code(){}
 //Int Constants
 
 IntConst::IntConst(){}
 IntConst::IntConst(int x){
 	child = x;
+}
+void IntConst::code(){
+	cout << "addi $sp, $sp, -4" << endl <<
+			"addi $t1, $0, "<< child << endl <<
+			"sw $t1, 0($sp)" << endl;
+	return;
 }
 void IntConst::print(){
 	cout << "(IntConst " << child << ")";
@@ -569,7 +636,7 @@ StringConst::StringConst(string x){
 void StringConst::print(){
 	cout << "(StringConst " << child << ")";
 }
-
+void StringConst::code(){}
 
 
 
@@ -589,7 +656,11 @@ void Member::print(){
 	right->print();
 	cout << ")";
 }
-
+void Member::code(){
+	left->code();
+	cout << " ";
+	right->code();
+}
 
 Arrow::Arrow() {}
 Arrow::Arrow(ExpAst* l, Identifier* r){
@@ -604,13 +675,53 @@ void Arrow::print(){
 	right->print();
 	cout << ")";
 }
-
+void Arrow::code(){
+	left->code();
+	cout << " ";
+	right->code();
+}
 
 
 
 Identifier::Identifier(){}
 Identifier::Identifier(string x){
 	child = x;
+}
+
+void Identifier::code(){
+	// cout << this->is_left << endl;
+	map <string, SymbolTableEntry*>::iterator pit = stable->parameters.find(child);
+	if(pit != stable->parameters.end()){
+		int tmp = 4 + pit->second->offset;
+		if(this->is_left == 0){
+			cout << "addi $sp, $sp, -4" << endl <<
+				"addi $t1, $fp, "<< tmp << endl <<
+				"lw $t1, 0($t1)" << endl <<
+				"sw $t1, 0($sp)" << endl;
+		}
+		else{
+			cout << "addi $sp, $sp, -4" << endl <<
+					"addi $t1, $fp, "<< tmp << endl <<
+					"sw $t1, 0($sp)" << endl;
+			}
+		return;
+	}
+	pit = stable->localvars.find(child);
+	if(pit != stable->localvars.end()){
+		int tmp = pit->second->offset;
+		if(this->is_left == 0){
+			cout << "addi $sp, $sp, -4" << endl <<
+					"addi $t1, $fp, " << tmp << endl <<
+					"lw $t1, 0($t1)" << endl <<
+					"sw $t1, 0($sp)" << endl;
+		}
+		else{
+			cout << "addi $sp, $sp, -4" << endl <<
+					"addi $t1, $fp, " << tmp << endl <<
+					"sw $t1, 0($sp)" << endl;
+		}
+		return;
+	}
 }
 void Identifier::print(){
 	cout<<"(Id \"" << child << "\")";
@@ -632,7 +743,10 @@ void ArrayRef::print(){
 	right->print();
 	cout << ")";
 }
-
+void ArrayRef::code(){
+	left->code();
+	right->code();
+}
 
 //De reference
 
@@ -646,4 +760,6 @@ void DeRef::print(){
 	cout <<")";
 }
 
-
+void DeRef::code(){
+	child->code();
+}

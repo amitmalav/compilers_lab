@@ -52,6 +52,7 @@ class abstract_astnode{
 public:
   Type* type;
   virtual void print () = 0;
+  virtual void code () = 0;
   
   //virtual std::string generate_code(const symbolTable&) = 0;
   //virtual basic_types getType() = 0;
@@ -68,16 +69,22 @@ private:
 class StmtAst: public abstract_astnode{
 public:
 	void print() = 0;
+  void code() = 0;
+  
 };
 
 class ExpAst: public abstract_astnode{
 public:
   int lvalue;
+  int is_left = 0;
 	void print() = 0;
+  void code() = 0;
 };
 class RefAst: public ExpAst{
 public:
   void print() = 0;
+  void code() = 0;
+  
 };
 
 
@@ -89,7 +96,8 @@ class BlockStmt: public StmtAst{
 public:
 	std::vector<StmtAst*> children;
 public:
-  	void print();
+  	void print(); void code();
+    
   	BlockStmt();
   	BlockStmt(StmtAst*);
 };
@@ -97,13 +105,15 @@ public:
 
 class Empty:public StmtAst{
 public:
-	void print();
+	void print(); void code();
+  
 };
 
 class Seq: public StmtAst{
 	std::vector<StmtAst*>children;
 public:
-	void print();
+	void print(); void code();
+
   void insert_Seq(StmtAst*);
 	Seq();
 	Seq(StmtAst*);
@@ -113,7 +123,7 @@ public:
 class Ass: public StmtAst{
 	ExpAst *child;
 public:
-	void print();
+	void print(); void code();
 	bool empty;
 	Ass();
 	Ass(ExpAst*child);
@@ -123,7 +133,7 @@ public:
 class Return: public StmtAst{
 	ExpAst*child;
 public:
-	void print();
+	void print(); void code();
 	Return();
 	Return(ExpAst*, Type*);
 };
@@ -132,7 +142,7 @@ class If: public StmtAst{
 	ExpAst*first;
 	StmtAst*second,*third;
 public:
-  	void print();
+  	void print(); void code();
   	If();
   	If(ExpAst*, StmtAst*, StmtAst*);
 };
@@ -142,7 +152,7 @@ class While: public StmtAst{
   	ExpAst*left;
   	StmtAst*right;
 public:
-  	void print();
+  	void print(); void code();
  	While();
   	While(ExpAst*, StmtAst*);
 };
@@ -152,7 +162,7 @@ class For: public StmtAst{
   	ExpAst*first,*second,*third;
   	StmtAst*child;
 public:
-	void print();
+	void print(); void code();
   	For();
   	For(ExpAst*, ExpAst*, ExpAst*, StmtAst*);
 };
@@ -168,7 +178,7 @@ class OpBinary: public ExpAst{
 	ExpAst*left,*right;
   	opNameB opName;
 public:
-  	void print();
+  	void print(); void code();
   	OpBinary();
   	OpBinary(ExpAst*, ExpAst*, opNameB);
   	OpBinary(opNameB);
@@ -178,7 +188,7 @@ class OpUnary: public ExpAst{
 	ExpAst* child;
   opNameU opName;
 public:
-  	void print();
+  	void print(); void code();
   	OpUnary();
   	OpUnary(ExpAst*, OpUnary*);
   	OpUnary(ExpAst*, opNameU);
@@ -189,15 +199,15 @@ class Assign: public ExpAst{
   	ExpAst*left;
   	ExpAst*right;
 public:
-  	void print();
- 	Assign();
+  	void print(); void code();
+  	Assign();
   	Assign(ExpAst*, ExpAst*);
 };
 
 class Funcall: public ExpAst{
 public:
 	std::vector<ExpAst*> children;
-  	void print();
+  	void print(); void code();
   	Funcall();
   	Funcall(std::vector<ExpAst*>);
   	Funcall(ExpAst*);
@@ -206,7 +216,7 @@ public:
 class FloatConst: public ExpAst{
 	float child;
 public:
-  	void print();
+  	void print(); void code();
   	FloatConst();
   	FloatConst(float child);
 };
@@ -214,7 +224,7 @@ public:
 class IntConst: public ExpAst{
 	int child;
 public:
-  	void print();
+  	void print(); void code();
   	IntConst();
   	IntConst(int child);
 };
@@ -222,14 +232,14 @@ public:
 class StringConst: public ExpAst{
 	std::string child;
 public:
-  	void print();
+  	void print(); void code();
   	StringConst();
   	StringConst(std::string child);
 };
 class Pointer: public RefAst{
 	RefAst*child;
 public:
-	void print();
+	void print(); void code();
 	Pointer();
 	Pointer(RefAst*);
 };
@@ -240,7 +250,7 @@ public:
 class Identifier: public RefAst{
 	std::string  child;
 public:
-  	void print();
+  	void print(); void code();
   	Identifier();
   	Identifier(std::string child);
 };
@@ -250,15 +260,15 @@ class Member: public RefAst{
   	ExpAst*left;
   	Identifier*right;
 public:
-  	void print();
- 	Member();
+  	void print(); void code();
+ 	  Member();
   	Member(ExpAst*, Identifier*);
 };
 class Arrow: public RefAst{
   	ExpAst*left;
   	Identifier*right;
 public:
-  	void print();
+  	void print(); void code();
  	Arrow();
   	Arrow(ExpAst*, Identifier*);
 };
@@ -269,7 +279,7 @@ class ArrayRef: public RefAst{
 	ExpAst*left;
   	ExpAst* right;
 public:
-  	void print();
+  	void print(); void code();
   	ArrayRef();
   	ArrayRef(ExpAst* left, ExpAst* right);
 };
@@ -278,7 +288,7 @@ public:
 class DeRef: public RefAst{
 	RefAst*child;
 public:
-	void print();
+	void print(); void code();
 	DeRef();
 	DeRef(RefAst*);
 };

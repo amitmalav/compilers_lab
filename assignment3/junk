@@ -1,2 +1,92 @@
-(Block [])
-Error:: On line 25 'a' has a previous declaration as 'int a'
+(Block [(Assign (Id "p") (IntConst 1)) (Assign (Id "q") (IntConst 2)) (Assign (Id "r") (IntConst 3)) (Assign (Id "s") (PLUS_INT (PLUS_INT (Id "p") (Id "q")) (Id "r")))])
+
+
+
+
+
+addi $sp, $sp, -4
+addi $t1, $fp, -4
+sw $t1, 0($sp)
+addi $sp, $sp, -4
+addi $t1, $0, 1
+sw $t1, 0($sp)
+lw $t1, 0($sp)
+lw $t2, 4($sp)
+sw $t1, 0($t2)
+addi $sp, $sp, 8
+addi $sp, $sp, -4
+sw $t1, 0($sp)
+addi $sp, $sp, -4
+addi $t1, $fp, -12
+sw $t1, 0($sp)
+addi $sp, $sp, -4
+addi $t1, $0, 2
+sw $t1, 0($sp)
+lw $t1, 0($sp)
+lw $t2, 4($sp)
+sw $t1, 0($t2)
+addi $sp, $sp, 8
+addi $sp, $sp, -4
+sw $t1, 0($sp)
+addi $sp, $sp, -4
+addi $t1, $fp, -8
+sw $t1, 0($sp)
+addi $sp, $sp, -4
+addi $t1, $0, 3
+sw $t1, 0($sp)
+lw $t1, 0($sp)
+lw $t2, 4($sp)
+sw $t1, 0($t2)
+addi $sp, $sp, 8
+addi $sp, $sp, -4
+sw $t1, 0($sp)
+addi $sp, $sp, -4
+addi $t1, $fp, -16
+sw $t1, 0($sp)
+addi $sp, $sp, -4
+addi $t1, $fp, -4
+lw $t1, 0($t1)
+sw $t1, 0($sp)
+addi $sp, $sp, -4
+addi $t1, $fp, -12
+lw $t1, 0($t1)
+sw $t1, 0($sp)
+lw $t1, 0($sp)
+lw $t2, 4($sp)
+add $t1, $t1, $t2
+addi $sp, $sp, 8
+addi $sp, $sp, -4
+sw $t1, 0($sp)
+addi $sp, $sp, -4
+addi $t1, $fp, -8
+lw $t1, 0($t1)
+sw $t1, 0($sp)
+lw $t1, 0($sp)
+lw $t2, 4($sp)
+add $t1, $t1, $t2
+addi $sp, $sp, 8
+addi $sp, $sp, -4
+sw $t1, 0($sp)
+lw $t1, 0($sp)
+lw $t2, 4($sp)
+sw $t1, 0($t2)
+addi $sp, $sp, 8
+addi $sp, $sp, -4
+sw $t1, 0($sp)
+
+
+
+
+
+
+
+
+
+
+Function: f		void		-1
+Local vars: p		int		4		-4
+Local vars: q		int		4		-12
+Local vars: r		int		4		-8
+Local vars: s		int		4		-16
+
+

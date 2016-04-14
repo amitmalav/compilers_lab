@@ -94,7 +94,9 @@ function_definition
         	gtable->insertTablefun(stable);
         	paraMap.clear();
         	$$->print();
-        	cout << endl;
+        	cout << endl<< endl<< endl<< endl<< endl<< endl;
+        	$$->code();
+        	cout << endl<< endl<< endl<< endl<< endl<< endl;
 		}
 		;
 
@@ -355,11 +357,14 @@ expression                                   //assignment expressions are right 
 
 
         	//cout << $1->type->getType() << "  "<< $3->type->getType() << endl;
+        	$1->is_left = 1;
         	$$ = new Assign($1, $3);
         	if ($$->type->typeKind == Error){
 				cout<<"Error:: On line "<<d_scanner.lineNr()<<", Assignment of Incompatible types."<<endl;	
 				exit(0);		
 			}
+
+
         }   // l_expression has been replaced by unary_expression.
         ;                                    // This may generate programs that are syntactically incorrect.
                                              // Eliminate them during semantic analysis.
