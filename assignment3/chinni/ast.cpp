@@ -448,7 +448,7 @@ void OpBinary::code(){
 	if(opName == 19)cout << "sge $t1, $t1, $t2" << endl;		
 	if(opName == 22)cout << "add $t1, $t1, $t2" << endl;
 	if(opName == 25)cout << "sub $t1, $t1, $t2" << endl;
-	if(opName == 28)cout << "mult $t1, $t1, $t2" << endl;
+	if(opName == 28)cout << "mul $t1, $t1, $t2" << endl;
 	if(opName == 31)cout << "div $t1, $t1, $t2" << endl;
 
 	//Float binary op
@@ -646,10 +646,32 @@ void type_change(Type* &a, Type* &b)
 }
 
 void Funcall::code()
-{
+{	
+
+
 	string funName = ((Identifier*)(children[0]))->child;
+	if(funName == "printf"){
+		for(int i = 1; i < children.size(); i++)
+			{
+				children[i]->code();
+				// Type* required = pit->second->idType;
+				// Type* present = children[i]->type;
+				// type_change(present, required);
+				// pit++;
+
+
+				cout << "li $v0, 1" << endl
+					 << "lw $t1, 0($sp)" << endl
+					 // << "lw $t1, 0($t1)" << endl
+					 << "move $a0, $t1" << endl
+					 <<"syscall" << endl << endl
+					 << "addi $sp, $sp, 4";
+			}
+		return;
+	}
 	SymbolTable* tmp = gtable->funsymtable.find(funName)->second;
 	map <string, SymbolTableEntry*>::iterator pit = tmp->parameters.begin();
+
 
 	cout<<"addi $sp, $sp, -" << tmp->size() <<endl; //save ret.val
 		
@@ -773,7 +795,7 @@ Identifier::Identifier(string x){
 }
 
 void Identifier::code(){
-	// cout << this->is_left << endl;
+	// cout << child << "  " << this->is_left << endl;
 	map <string, SymbolTableEntry*>::iterator pit = stable->parameters.find(child);
 	if(pit != stable->parameters.end()){
 		int tmp = 4 + pit->second->offset;
@@ -851,10 +873,10 @@ void DeRef::code(){
 
 void gen_func(SymbolTable* st){
 	cout << st->entryName << ":" << endl;
-	cout << "subi $sp, $sp, 4" << endl
+	cout << "addi $sp, $sp, -4" << endl
 		 << "lw $ra, 0($sp)" << endl
-		 << "subi $sp, $sp, 4" << endl
-		 << "lw $fp, 0($fp)" << endl
+		 << "addi $sp, $sp, -4" << endl
+		 << "sw $fp, 0($sp)" << endl
 		 << "move $fp, $sp" <<endl;
 
 	map <string, SymbolTableEntry*>::iterator sit;
@@ -862,8 +884,7 @@ void gen_func(SymbolTable* st){
 	for(sit = st->localvars.begin(); sit != st->localvars.end(); sit++){
 		if(tmp >= sit->second->offset)tmp = sit->second->offset;
 	}
-	tmp = -tmp;
-	cout << "subi $sp, $sp, "<< tmp << endl;
+	cout << "addi $sp, $sp, "<< tmp << endl;
 	cout << endl;
 }
 

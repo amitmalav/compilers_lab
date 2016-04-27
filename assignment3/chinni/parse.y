@@ -576,6 +576,13 @@ postfix_expression
 
 	    	((Funcall*)$3)->children.insert(((Funcall*)$3)->children.begin(), new Identifier($1));
 			
+			if($1 == "printf"){
+				$$ = $3;
+				$$->lvalue = 0;
+				cout << "blah" << endl;
+			}
+
+			else{
 			$$ = $3;
 			$$->lvalue = 0;
 			Funcall *fc = (Funcall *) $$;
@@ -645,6 +652,7 @@ postfix_expression
 				}
 				$$->type->check = 3;
 
+			}
 			}
 	    }    // Cannot appear on the LHS of '='  Enforce this.
 
