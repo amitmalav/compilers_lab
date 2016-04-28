@@ -1,4 +1,6 @@
-int f(int a, int b, int c[2][3], int e){
-	int d;
-	;
+int main(){
+	int a;
+	a = 1;
+	a ++;
+	printf(a);
 }

@@ -1,7 +1,5 @@
-blah
-(Block [(Assign (Id "a") (IntConst 1)) (PP (Id "a")) (Funcall (Id "printf") (Id "a"))])
-
-
+.globl main 
+	.text 
 
 
 
@@ -51,17 +49,5 @@ move $a0, $t1
 syscall
 
 addi $sp, $sp, 4
-
-
-
-
-
-
-
-
-
-
-Function: main		int		4
-Local vars: a		int		4		-4
 
 

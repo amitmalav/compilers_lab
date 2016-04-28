@@ -205,7 +205,7 @@ vector<int> if_count;
 int ifC = 0;
 void If::code(){
 	if_count.push_back(ifC);
-	string tmp = "IF_LOOP" + to_string(if_count[if_count.size() - 1]) + ": ";
+	string tmp = "IF_LOOP" + to_string(if_count[if_count.size() - 1]);
 	If* cond_check = new If(first, tmp);
 	cond_check->lpcode();
 	ifC++;
@@ -217,10 +217,10 @@ void If::code(){
 	if_count.pop_back();
 }
 void If::lpcode()
-{
+{             
 	first->code();
 	cout << "lw $t1, 0($sp)" << endl
-		 << "bne $t0, $0, " << str << endl << endl;
+		 << "bne $t1, $0, " << str << endl << endl;
 }
 //While
 
@@ -241,15 +241,15 @@ vector<int> while_count;
 int whileC=0;
 void While::code(){
 	while_count.push_back(whileC);
-	string tmp = "WHILE_LOOP" + to_string(while_count[while_count.size() - 1]) + ": ";
+	string tmp = "WHILE_LOOP" + to_string(while_count[while_count.size() - 1]);
 	If* cond_check = new If(left, tmp);
 	cond_check->lpcode();
 	cout << "j WHILE_SKIP" << while_count[while_count.size() - 1] << endl << endl;
-	cout << "WHILE_LOOP" << while_count[while_count.size() - 1] + ": " << endl;
+	cout << "WHILE_LOOP" << while_count[while_count.size() - 1] << ": " << endl;
 	whileC++;
 	right->code();
 	cond_check->lpcode();
-	cout << "WHILE_SKIP" << while_count[while_count.size() - 1] + ": " << endl;
+	cout << "WHILE_SKIP" << while_count[while_count.size() - 1] << ": " << endl;
 	while_count.pop_back();
 }
 //For
@@ -277,7 +277,7 @@ vector <int> for_count;
 int forC = 0;
 void For::code(){
 	for_count.push_back(forC);
-	string tmp = "FOR_LOOP" + to_string(for_count[for_count.size() - 1]) + ": ";
+	string tmp = "FOR_LOOP" + to_string(for_count[for_count.size() - 1]);
 	If* loop_check = new If(second, tmp);
 	first->code();
 	loop_check->lpcode();
@@ -478,8 +478,8 @@ void OpBinary::code(){
   	right->code();
   	// cout << endl << " blah "<<opName<<endl;
 
-	cout << "lw $t1, 0($sp)" << endl <<
-			"lw $t2, 4($sp)" << endl;
+	cout << "lw $t2, 0($sp)" << endl <<
+			"lw $t1, 4($sp)" << endl;
 	if(opName == 1)cout << "or $t1, $t1, $t2" << endl;
 	if(opName == 2)cout << "and $t1, $t1, $t2" << endl;
 	if(opName == 4)cout << "seq $t1, $t1, $t2" << endl;
@@ -506,7 +506,8 @@ void OpBinary::code(){
 	// if(opName == 32)cout << "div $f1, $f1, $f2" << endl;
 	cout << "addi $sp, $sp, 8" << endl <<
 			"addi $sp, $sp, -4" << endl <<
-			"sw $t1, 0($sp)" << endl<<endl;
+			"sw $t1, 0($sp)" << endl;
+
 }
 //Unary operators
 
@@ -585,27 +586,29 @@ void OpUnary::code(){
 	child->code();
 
 	cout << "lw $t1, 0($sp)" << endl;
-	if(opName == NOT)
+	if(opName == 35)
 	{
 		cout << "li $t0, 1" << endl <<
 				"xor $t1, $t1, $t0" << endl;
 	}
-	if(opName == PP)
+	if(opName == 36)
 	{
-		cout << "addi $t1, $t1, 1" << endl;
+		cout << "addi $t1, $t1, 1" << endl
+			 << "addi $t2, $fp, " << child->addr << endl
+			 << "sw $t1, 0($t2)" << endl;
 	}
-	if(opName == DEREF)
-	{
-		cout << "lw $t1, 0($t1)" << endl;
+	if(opName == 37)
+	{	
+		cout << "addi $t1, $fp, " << child->addr << endl;
 	}
-	if(opName == UMINUS)
+	if(opName == 34)
 	{
 		cout << "muli $t1, $t1, -1" << endl;
 	}
 
-	cout << "addi $sp, $sp, 8" << endl <<
+	cout << "addi $sp, $sp, 4" << endl <<
 			"addi $sp, $sp, -4" << endl <<
-			"sw $t1, 0($sp)" << endl<<endl;
+			"sw $t1, 0($sp)" << endl;
 }
 //Assign
 Assign::Assign() {}
@@ -654,14 +657,15 @@ void Assign::code(){
 	// cout << stable->entryName << endl;
 	// cout << left->is_right << endl << right->is_right << endl;
 
-	left->code();
 	right->code();
-	cout << "lw $t1, 0($sp)" << endl <<
-			"lw $t2, 4($sp)" << endl <<
+	left->code();
+	cout << "addi $t2, $fp," << left->addr << endl <<
+			"lw $t1, 4($sp)" << endl <<
 			"sw $t1, 0($t2)" << endl <<
 			"addi $sp, $sp, 8" << endl <<
 			"addi $sp, $sp, -4" << endl <<
 			"sw $t1, 0($sp)" << endl<<endl;
+	addr = left->addr;
 
 }
 //Function calls
@@ -707,7 +711,7 @@ void Funcall::code()
 					 // << "lw $t1, 0($t1)" << endl
 					 << "move $a0, $t1" << endl
 					 <<"syscall" << endl << endl
-					 << "addi $sp, $sp, 4";
+					 << "addi $sp, $sp, 4" << endl;
 			}
 		return;
 	}
@@ -853,10 +857,12 @@ void Identifier::code(){
 		// 			"sw $t1, 0($sp)" << endl<<endl;
 		// 	}
 		// return;
-		int tmp = -4 + pit->second->offset;
+		int tmp = 4 + pit->second->offset;
 		cout << "addi $sp, $sp, -4" << endl <<
 				"addi $t1, $fp, "<< tmp << endl <<
+				"lw $t1, 0($t1)" << endl <<
 				"sw $t1, 0($sp)" << endl<<endl;
+		addr = tmp;
 		return;
 
 
@@ -881,7 +887,10 @@ void Identifier::code(){
 		int tmp = -4 + pit->second->offset;
 		cout << "addi $sp, $sp, -4" << endl <<
 				"addi $t1, $fp, "<< tmp << endl <<
+				"lw $t1, 0($t1)" << endl <<
 				"sw $t1, 0($sp)" << endl<<endl;
+
+		addr = tmp;
 		return;
 
 // =======
