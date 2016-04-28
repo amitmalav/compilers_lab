@@ -2,6 +2,7 @@
 #include <string>
 #include <iterator>
 #include <vector>
+#include <map>
 using namespace std;
 
 string get_enum[] = {
@@ -48,7 +49,7 @@ string get_enum[] = {
 	"TO_INT"
 };
 
-
+map <string, string> str_labels;
 ////////////////////////////////////////////////////////
 
 
@@ -606,7 +607,11 @@ void OpUnary::code(){
 		cout << "li $t2, -1" << endl;
 		cout << "mul $t1, $t1, $t2" << endl;
 	}
-
+	if(opName == 38)
+	{
+		cout << "lw $t1, 0($sp)" << endl
+		 << "lw $t1, 0($t1)" << endl;
+	}
 	cout << "addi $sp, $sp, 4" << endl <<
 			"addi $sp, $sp, -4" << endl <<
 			"sw $t1, 0($sp)" << endl;
@@ -711,14 +716,25 @@ void Funcall::code()
 				// Type* present = children[i]->type;
 				// type_change(present, required);
 				// pit++;
-
-
-				cout << "li $v0, 1" << endl
-					 << "lw $t1, 0($sp)" << endl
-					 // << "lw $t1, 0($t1)" << endl
-					 << "move $a0, $t1" << endl
-					 <<"syscall" << endl << endl
-					 << "addi $sp, $sp, 4" << endl;
+				if(children[i]->type->base == 0)
+				{
+					cout << "lw $t1, 0($sp)" << endl
+						 // << "lw $t1, 0($t1)" << endl
+						 << "move $a0, $t1" << endl
+						 << "li $v0, 1" << endl
+						 <<"syscall" << endl << endl
+						 << "addi $sp, $sp, 4" << endl;	
+				}
+				if(children[i]->type->base == 2)
+				{
+					cout << "lw $t1, 0($sp)" << endl
+						 // << "lw $t1, 0($t1)" << endl
+						 << "move $a0, $t1" << endl
+						 << "li $v0, 4" << endl
+						 <<"syscall" << endl << endl
+						 << "addi $sp, $sp, 4" << endl;	
+				}
+				
 			}
 		return;
 	}
@@ -728,7 +744,7 @@ void Funcall::code()
 
 	cout<<"addi $sp, $sp, -" << tmp->size() <<endl; //save ret.val
 		
-	for(int i = 1; i < children.size(); i++)
+	for(int i = children.size() - 1; i >= 1; i--)
 	{
 		children[i]->code();
 		// Type* required = pit->second->idType;
@@ -743,7 +759,6 @@ void Funcall::code()
 ///////////////////////////////////////////////////////////////////////
 
 //Pointer
-
 Pointer::Pointer(){}
 Pointer::Pointer(RefAst *child){
 	this->child =child;
@@ -755,8 +770,12 @@ void Pointer::print(){
 }
 void Pointer::code(){
 	child->code();
+	cout << "lw $t1, 0($sp)" << endl
+		 << "lw $t1, 0($t1)" << endl
+		 << "addi $sp, $sp, 4" << endl
+		 << "addi $sp, $sp, -4" << endl
+		 << "sw $t1, 0($sp)" << endl;
 }
-
 //Float Constants
 
 FloatConst::FloatConst(float x){
@@ -789,19 +808,28 @@ void IntConst::print(){
 
 //String Constants
 
+
+int strn_num = 0;
 StringConst::StringConst(string x){
 	child = x;
-
+	str_labels[x] = ("ss" + to_string(strn_num));
+	strn_num++;
 }
 void StringConst::print(){
 	cout << "(StringConst " << child << ")";
 }
-void StringConst::code(){}
+void StringConst::code(){
+	map<string, string>::iterator it;
+	it = str_labels.find(child);
+	string s = it->second;
+	cout << "la $t1, " << s << endl 
+		 << "addi $sp, $sp, -4" << endl
+		 << "sw $t1, 0($sp)" << endl;
+}
 
 
 
 ////////////////////////////////////////////////////////
-
 Member::Member() {}
 Member::Member(ExpAst* l, Identifier* r){
 	left = l;
@@ -819,8 +847,19 @@ void Member::print(){
 void Member::code(){
 	left->code();
 	cout << " ";
-	right->code();
+	string strName = left->type->structType;
+	SymbolTable* tmp = gtable->strsymtable.find(strName)->second;
+	map <string, SymbolTableEntry*>::iterator pit = tmp->localvars.find(right->child);
+	int off = pit->second->offset;
+	cout << "lw $t1, 0($sp)" << endl
+		 << "addi $t1, $t1, " << off << endl
+		 << "move $t8, $t1" << endl
+		 << "lw $t1, 0($t1)" << endl
+		 << "addi $sp, $sp, 4" << endl
+		 << "addi $sp, $sp, -4" << endl
+		 << "sw $t1, 0($sp)" << endl;
 }
+
 
 Arrow::Arrow() {}
 Arrow::Arrow(ExpAst* l, Identifier* r){
@@ -865,7 +904,7 @@ void Identifier::code(){
 		// 			"sw $t1, 0($sp)" << endl<<endl;
 		// 	}
 		// return;
-		int tmp = 4 + pit->second->offset;
+		int tmp = 8 + pit->second->offset;
 		if(type->isArray == 1){
 			cout << "addi $sp, $sp, -4" << endl <<
 				"addi $t1, $fp, "<< tmp << endl <<
@@ -1012,9 +1051,13 @@ void DeRef::code(){
 
 
 void gen_func(SymbolTable* st){
+	if(st->entryName == "main")
+	{
+		cout << "		.text"<<endl;
+	}
 	cout << st->entryName << ":" << endl;
 	cout << "addi $sp, $sp, -4" << endl
-		 << "lw $ra, 0($sp)" << endl
+		 << "sw $ra, 0($sp)" << endl
 		 << "addi $sp, $sp, -4" << endl
 		 << "sw $fp, 0($sp)" << endl
 		 << "move $fp, $sp" <<endl;
@@ -1028,3 +1071,28 @@ void gen_func(SymbolTable* st){
 	cout << endl;
 }
 
+
+void gen_funend(SymbolTable* st)
+{
+	if(st->entryName != "main")
+	{
+		cout << "lw $ra, 4($fp)" << endl
+		 << "jr $ra" << endl << endl;	
+	}
+	else
+	{
+		cout << "li $v0, 10" << endl
+			 << "syscall" << endl;
+	}
+		
+}
+
+void strn_data()
+{
+	cout << "		.data"<<endl;
+	map<string, string>::iterator it;
+	for(it = str_labels.begin(); it!=str_labels.end(); ++it)
+	{
+		cout << it->second << ":  .asciiz  " << it->first << endl;	
+	}
+}
