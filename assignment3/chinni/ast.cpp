@@ -68,7 +68,7 @@ void BlockStmt::print(){
 	cout << "])";
 }
 int x=0;
-void BlockStmt::code(){
+void BlockStmt::code(int mode){
 	// map <string, SymbolTable*>::iterator sit = gtable->funsymtable.begin(); 
 	// cout<< gtable->funsymtable.size()<<endl;
 	//cout<< sit->second->entryName <<":" <<endl;
@@ -78,14 +78,14 @@ void BlockStmt::code(){
 	// cout<<sit->second->entryName<<":"<<endl;
 	
 	for (int i = 0; i < children.size(); i++) {
-		children.at(i)->code();
+		children.at(i)->code(0);
 	}
 	// x++;
 }
 void Empty::print(){
 	// cout << "(Empty)";
 }
-void Empty::code(){}
+void Empty::code(int mode){}
 
 //Seq
 
@@ -107,9 +107,9 @@ void Seq::print(){
 	}
 	cout << ")";
 }
-void Seq::code(){
+void Seq::code(int mode){
 	for (int i = 0; i < children.size(); i++) {
-		children.at(i)->code();
+		children.at(i)->code(0);
 	}
 }
 
@@ -133,13 +133,13 @@ void Ass::print(){
 	child-> print();
 	// cout << ")";
 }
-void Ass::code(){
+void Ass::code(int mode){
 	if(empty){
 		// cout << "(Empty)";
 		return;
 	}
 	// cout << "(Ass ";
-	child-> code();
+	child-> code(0);
 	// cout << ")";
 }
 
@@ -176,8 +176,8 @@ void Return::print(){
 	child->print();
 	cout << ")";
 }
-void Return::code(){
-	child->code();
+void Return::code(int mode){
+	child->code(0);
 }
 //If
 
@@ -204,22 +204,22 @@ void If::print(){
 }
 vector<int> if_count;
 int ifC = 0;
-void If::code(){
+void If::code(int mode){
 	if_count.push_back(ifC);
 	string tmp = "IF_LOOP" + to_string(if_count[if_count.size() - 1]);
 	If* cond_check = new If(first, tmp);
 	cond_check->lpcode();
 	ifC++;
-	third->code();
+	third->code(0);
 	cout << "j IF_SKIP" << if_count[if_count.size() - 1] << endl<<endl;
 	cout << "IF_LOOP" << if_count[if_count.size() - 1] << ": " << endl;
-	second->code();
+	second->code(0);
 	cout << "IF_SKIP" << if_count[if_count.size() - 1] << ": " << endl;
 	if_count.pop_back();
 }
 void If::lpcode()
 {             
-	first->code();
+	first->code(0);
 	cout << "lw $t1, 0($sp)" << endl
 		 << "bne $t1, $0, " << str << endl << endl;
 }
@@ -240,7 +240,7 @@ void While::print(){
 }
 vector<int> while_count;
 int whileC=0;
-void While::code(){
+void While::code(int mode){
 	while_count.push_back(whileC);
 	string tmp = "WHILE_LOOP" + to_string(while_count[while_count.size() - 1]);
 	If* cond_check = new If(left, tmp);
@@ -248,7 +248,7 @@ void While::code(){
 	cout << "j WHILE_SKIP" << while_count[while_count.size() - 1] << endl << endl;
 	cout << "WHILE_LOOP" << while_count[while_count.size() - 1] << ": " << endl;
 	whileC++;
-	right->code();
+	right->code(0);
 	cond_check->lpcode();
 	cout << "WHILE_SKIP" << while_count[while_count.size() - 1] << ": " << endl;
 	while_count.pop_back();
@@ -276,17 +276,17 @@ void For::print(){
 }
 vector <int> for_count;
 int forC = 0;
-void For::code(){
+void For::code(int mode){
 	for_count.push_back(forC);
 	string tmp = "FOR_LOOP" + to_string(for_count[for_count.size() - 1]);
 	If* loop_check = new If(second, tmp);
-	first->code();
+	first->code(0);
 	loop_check->lpcode();
 	cout << "j FOR_SKIP" << for_count[for_count.size() -  1] << endl <<endl;
 	cout << endl << "FOR_LOOP" << for_count[for_count.size() - 1] << ": "<< endl;
 	forC++;
-	child->code();
-	third->code();
+	child->code(0);
+	third->code(0);
 	loop_check->lpcode();
 	cout << "FOR_SKIP" << for_count[for_count.size() - 1] << ": "<< endl << endl;
 	for_count.pop_back();
@@ -474,9 +474,9 @@ void OpBinary::print(){
   	right->print();
   	cout<<")";
 }
-void OpBinary::code(){
-	left->code();
-  	right->code();
+void OpBinary::code(int mode){
+	left->code(0);
+  	right->code(0);
   	// cout << endl << " blah "<<opName<<endl;
 
 	cout << "lw $t2, 0($sp)" << endl <<
@@ -583,8 +583,8 @@ void OpUnary::print(){
   	child->print();
   	cout<<")";
 }
-void OpUnary::code(){
-	child->code();
+void OpUnary::code(int mode){
+	child->code(0);
 
 	cout << "lw $t1, 0($sp)" << endl;
 	if(opName == 35)
@@ -659,28 +659,28 @@ void Assign::print(){
 	right->print();
 	cout << ")";
 }
-void Assign::code(){
+void Assign::code(int mode){
 	// cout << stable->entryName << endl;
 	// cout << left->is_right << endl << right->is_right << endl;
 
-	right->code();
-	left->code();
-	if(left->type->isArray == 1){
-		cout << "lw $t1, 4($sp)" << endl <<
-				"sw $t1, 0($t9)" << endl <<
-				"addi $sp, $sp, 8" << endl <<
-				"addi $sp, $sp, -4" << endl <<
-				"sw $t1, 0($sp)" << endl<<endl;
-		addr = left->addr;
-		return;
-	}
-	cout << "addi $t2, $fp," << left->addr << endl <<
-			"lw $t1, 4($sp)" << endl <<
+	right->code(0);
+	left->code(1);
+	// if(left->type->isArray == 1){
+	// 	cout << "lw $t1, 4($sp)" << endl <<
+	// 			"sw $t1, 0($t9)" << endl <<
+	// 			"addi $sp, $sp, 8" << endl <<
+	// 			"addi $sp, $sp, -4" << endl <<
+	// 			"sw $t1, 0($sp)" << endl<<endl;
+	// 	addr = left->addr;
+	// 	return;
+	// }
+	cout << "lw $t1, 4($sp)" << endl <<
+			"lw $t2, 0($sp)" << endl <<
 			"sw $t1, 0($t2)" << endl <<
 			"addi $sp, $sp, 8" << endl <<
-			"addi $sp, $sp, -4" << endl <<
-			"sw $t1, 0($sp)" << endl<<endl;
-	addr = left->addr;
+			"addi $sp, $sp, -4" << endl;
+			if(mode == 0) cout << "sw $t1, 0($sp)" << endl<<endl;
+			else cout << "sw $t2, 0($sp)" << endl<<endl;
 }
 //Function calls
 
@@ -705,13 +705,13 @@ void type_change(Type* &a, Type* &b)
 	a->base = b->base;
 }
 
-void Funcall::code()
+void Funcall::code(int mode)
 {	
 	string funName = ((Identifier*)(children[0]))->child;
 	if(funName == "printf"){
 		for(int i = 1; i < children.size(); i++)
 			{
-				children[i]->code();
+				children[i]->code(0);
 				// Type* required = pit->second->idType;
 				// Type* present = children[i]->type;
 				// type_change(present, required);
@@ -746,7 +746,7 @@ void Funcall::code()
 		
 	for(int i = children.size() - 1; i >= 1; i--)
 	{
-		children[i]->code();
+		children[i]->code(0);
 		// Type* required = pit->second->idType;
 		// Type* present = children[i]->type;
 		// type_change(present, required);
@@ -768,8 +768,8 @@ void Pointer::print(){
 	child->print();
 	cout <<")";
 }
-void Pointer::code(){
-	child->code();
+void Pointer::code(int mode){
+	child->code(0);
 	cout << "lw $t1, 0($sp)" << endl
 		 << "lw $t1, 0($t1)" << endl
 		 << "addi $sp, $sp, 4" << endl
@@ -784,7 +784,7 @@ FloatConst::FloatConst(float x){
 void FloatConst::print(){
 	cout << "(FloatConst "<< child << ")";
 }
-void FloatConst::code()
+void FloatConst::code(int mode)
 {
 	cout<<"li $f0, "<< child <<endl;
 	cout<<"addi $sp, $sp, -4"<<endl;
@@ -796,7 +796,7 @@ IntConst::IntConst(){}
 IntConst::IntConst(int x){
 	child = x;
 }
-void IntConst::code(){
+void IntConst::code(int mode){
 	cout << "addi $sp, $sp, -4" << endl <<
 			"addi $t1, $0, "<< child << endl <<
 			"sw $t1, 0($sp)" << endl;
@@ -818,7 +818,7 @@ StringConst::StringConst(string x){
 void StringConst::print(){
 	cout << "(StringConst " << child << ")";
 }
-void StringConst::code(){
+void StringConst::code(int mode){
 	map<string, string>::iterator it;
 	it = str_labels.find(child);
 	string s = it->second;
@@ -844,20 +844,30 @@ void Member::print(){
 	right->print();
 	cout << ")";
 }
-void Member::code(){
-	left->code();
+void Member::code(int mode){
+	left->code(1);
 	cout << " ";
 	string strName = left->type->structType;
 	SymbolTable* tmp = gtable->strsymtable.find(strName)->second;
 	map <string, SymbolTableEntry*>::iterator pit = tmp->localvars.find(right->child);
 	int off = pit->second->offset;
-	cout << "lw $t1, 0($sp)" << endl
-		 << "addi $t1, $t1, " << off << endl
-		 << "move $t8, $t1" << endl
-		 << "lw $t1, 0($t1)" << endl
-		 << "addi $sp, $sp, 4" << endl
-		 << "addi $sp, $sp, -4" << endl
-		 << "sw $t1, 0($sp)" << endl;
+	if(mode == 0)
+	{
+		cout << "lw $t1, 0($sp)" << endl
+			 << "addi $t1, $t1, " << off << endl
+			 << "lw $t1, 0($t1)" << endl
+			 << "addi $sp, $sp, 4" << endl
+			 << "addi $sp, $sp, -4" << endl
+			 << "sw $t1, 0($sp)" << endl;
+	}
+	if(mode == 1)
+	{
+		cout << "lw $t1, 0($sp)" << endl
+			 << "addi $t1, $t1, " << off << endl
+			 << "addi $sp, $sp, 4" << endl
+			 << "addi $sp, $sp, -4" << endl
+			 << "sw $t1, 0($sp)" << endl;
+	}
 }
 
 
@@ -874,10 +884,10 @@ void Arrow::print(){
 	right->print();
 	cout << ")";
 }
-void Arrow::code(){
-	left->code();
+void Arrow::code(int mode){
+	left->code(0);
 	cout << " ";
-	right->code();
+	right->code(1);
 }
 
 
@@ -887,7 +897,7 @@ Identifier::Identifier(string x){
 	child = x;
 }
 
-void Identifier::code(){
+void Identifier::code(int mode){
 	// cout << child << "  " << this->is_left << endl;
 	map <string, SymbolTableEntry*>::iterator pit = stable->parameters.find(child);
 	if(pit != stable->parameters.end()){
@@ -905,7 +915,7 @@ void Identifier::code(){
 		// 	}
 		// return;
 		int tmp = 8 + pit->second->offset;
-		if(type->isArray == 1){
+		if(mode ==  1){
 			cout << "addi $sp, $sp, -4" << endl <<
 				"addi $t1, $fp, "<< tmp << endl <<
 				"sw $t1, 0($sp)" << endl<<endl;
@@ -916,7 +926,7 @@ void Identifier::code(){
 				"addi $t1, $fp, "<< tmp << endl <<
 				"lw $t1, 0($t1)" << endl <<
 				"sw $t1, 0($sp)" << endl<<endl;
-		addr = tmp;
+
 		return;
 
 
@@ -939,7 +949,7 @@ void Identifier::code(){
 		// return;\
 
 		int tmp = pit->second->offset;
-		if(type->isArray == 1){
+		if(mode ==  1){
 			cout << "addi $sp, $sp, -4" << endl <<
 				"addi $t1, $fp, "<< tmp << endl <<
 				"sw $t1, 0($sp)" << endl<<endl;
@@ -1006,9 +1016,9 @@ void ArrayRef::print(){
 	right->print();
 	cout << ")";
 }
-void ArrayRef::code(){
-	left->code();
-	right->code();
+void ArrayRef::code(int mode){
+	left->code(1);
+	right->code(0);
 
 	// cout << left->type->num_type_pointers << "   " << left->type->isArray << "  "<< left->type->arrayVector.size() << endl;
 
@@ -1024,12 +1034,11 @@ void ArrayRef::code(){
 			"add $t2, $t2, $t1" <<  endl <<
 			"addi $sp, $sp, 8" << endl;
 
-	if(left->type->arrayVector.size() == 1){
-		cout << "move $t9, $t2" << endl <<
-				"lw $t2, 0($t2)" << endl;
-	}
+	if(mode == 0){
+		cout << "lw $t2, 0($t2)" << endl;
+		}
 			cout << "addi $sp, $sp, -4" << endl <<
-			"lw $t2, 0($sp)" << endl;
+				"lw $t2, 0($sp)" << endl;
 
 }
 
@@ -1045,8 +1054,8 @@ void DeRef::print(){
 	cout <<")";
 }
 
-void DeRef::code(){
-	child->code();
+void DeRef::code(int mode){
+	child->code(0);
 }
 
 

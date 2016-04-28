@@ -96,11 +96,11 @@ function_definition
         	$$->print();
         	cout << endl<< endl<< endl<< endl<< endl<< endl;
         	//Initialize fun. code, labels, locals
-        	
+
         	strn_data();
         	gen_func(stable);
 
-        	$$->code();
+        	$$->code(0);
         	cout << endl<< endl<< endl<< endl<< endl<< endl;
 		}
 		;
