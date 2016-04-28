@@ -100,7 +100,7 @@ function_definition
         	strn_data();
         	gen_func(stable);
 
-        	$$->code();
+        	$$->code(0);
 
         	//restore_fun(stable);
         	gen_funend(stable);
