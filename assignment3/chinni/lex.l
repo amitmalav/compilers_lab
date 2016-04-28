@@ -6,7 +6,7 @@ integer-constant							([[:digit:]]+)|(0[xX]*[0-9a-fA-F]+)
 [ \t\n]+                                    //skip
 "//"[^\n]*\n 														// skip
 "/*"[^*]*(\*([^*/][^*]*)?)*"*/"										// skip
-\"([^\\]|([\\][tn\"\\]))*\"				{Parser::d_val__ = std::string(matched());return Parser::STRING_LITERAL;}
+L?\"(\\.|[^\\"])*\"						{Parser::d_val__ = std::string(matched());return Parser::STRING_LITERAL;}
 struct									return Parser::STRUCT;
 void									return Parser::VOID;
 int										return Parser::INT;
