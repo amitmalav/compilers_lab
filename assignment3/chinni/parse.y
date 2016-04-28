@@ -96,6 +96,7 @@ function_definition
         	$$->print();
         	cout << endl<< endl<< endl<< endl<< endl<< endl;
         	//Initialize fun. code, labels, locals
+        	
         	gen_func(stable);
 
         	$$->code();
@@ -361,7 +362,7 @@ expression                                   //assignment expressions are right 
 
 
         	//cout << $1->type->getType() << "  "<< $3->type->getType() << endl;
-        	$1->is_left = 1;
+        	//$1->is_left = 1;
         	$$ = new Assign($1, $3);
         	if ($$->type->typeKind == Error){
 				cout<<"Error:: On line "<<d_scanner.lineNr()<<", Assignment of Incompatible types."<<endl;	
@@ -575,7 +576,6 @@ postfix_expression
 	    	((Funcall*)$3)->children.insert(((Funcall*)$3)->children.begin(), new Identifier($1));
 			if($1 == "printf"){
 				$$ = $3;
-				$$->lvalue = 0;
 				cout << "blah" << endl;
 			}
 
@@ -667,6 +667,7 @@ postfix_expression
         	Type *t = $1->type->copy();
         	$$ = new ArrayRef($1, $3);
         	$$->type = t->copy();
+        	$$->lvalue = tm;
         	if($$->type->arrayVector.size() > 0)$$->type->arrayVector.erase($$->type->arrayVector.begin());
 
         	if($$->type->typeKind != Pointer){

@@ -1,6 +1,8 @@
 int main(){
-	int a;
-	a = 1;
-	a ++;
-	printf(a);
+    int a[10][12];
+    int b;
+    b =  10;
+    a[5][3] = b;
+    printf(a[5][3]);
+    ;
 }
