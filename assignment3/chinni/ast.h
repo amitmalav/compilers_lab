@@ -148,7 +148,6 @@ public:
   	If();
   	If(ExpAst*, string);
   	If(ExpAst*, StmtAst*, StmtAst*);
-  	
 };
 
 

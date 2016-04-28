@@ -201,7 +201,6 @@ void If::print(){
 	third->print();
 	cout << ")";
 }
-
 vector<int> if_count;
 int ifC = 0;
 void If::code(){
@@ -238,7 +237,6 @@ void While::print(){
 	right->print();
 	cout << ")";
 }
-
 vector<int> while_count;
 int whileC=0;
 void While::code(){
@@ -886,6 +884,37 @@ void Identifier::code(){
 				"sw $t1, 0($sp)" << endl<<endl;
 		return;
 
+// =======
+// 		int tmp = 4 + pit->second->offset;
+// 		if(this->is_left == 0){
+// 			cout << "addi $sp, $sp, -4" << endl <<
+// 				"addi $t1, $fp, "<< tmp << endl <<
+// 				"lw $t1, 0($t1)" << endl <<
+// 				"sw $t1, 0($sp)" << endl<<endl;
+// 		}
+// 		else{
+// 			cout << "addi $sp, $sp, -4" << endl <<
+// 					"addi $t1, $fp, "<< tmp << endl <<
+// 					"sw $t1, 0($sp)" << endl<<endl;
+// 			}
+// 		return;
+// 	}
+// 	pit = stable->localvars.find(child);
+// 	if(pit != stable->localvars.end()){
+// 		int tmp = pit->second->offset;
+// 		if(this->is_left == 0){
+// 			cout << "addi $sp, $sp, -4" << endl <<
+// 					"addi $t1, $fp, " << tmp << endl <<
+// 					"lw $t1, 0($t1)" << endl <<
+// 					"sw $t1, 0($sp)" << endl<<endl;
+// 		}
+// 		else{
+// 			cout << "addi $sp, $sp, -4" << endl <<
+// 					"addi $t1, $fp, " << tmp << endl <<
+// 					"sw $t1, 0($sp)" << endl<<endl;
+// 		}
+// 		return;
+// >>>>>>> c084be6942353b23eeb61db5f019e3f172175459
 	}
 }
 void Identifier::print(){

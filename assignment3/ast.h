@@ -95,9 +95,7 @@ public:
 class BlockStmt: public StmtAst{
 public:
 	std::vector<StmtAst*> children;
-public:
   	void print(); void code();
-    
   	BlockStmt();
   	BlockStmt(StmtAst*);
 };
@@ -110,8 +108,8 @@ public:
 };
 
 class Seq: public StmtAst{
-	std::vector<StmtAst*>children;
 public:
+	std::vector<StmtAst*>children;
 	void print(); void code();
 
   void insert_Seq(StmtAst*);
@@ -121,8 +119,8 @@ public:
 };
 
 class Ass: public StmtAst{
-	ExpAst *child;
 public:
+  ExpAst *child;
 	void print(); void code();
 	bool empty;
 	Ass();
@@ -131,17 +129,17 @@ public:
 };
 
 class Return: public StmtAst{
-	ExpAst*child;
 public:
+  ExpAst*child;
 	void print(); void code();
 	Return();
 	Return(ExpAst*, Type*);
 };
 
 class If: public StmtAst{
-	ExpAst*first;
-	StmtAst*second,*third;
 public:
+  ExpAst*first;
+  StmtAst*second,*third;
   	void print(); void code();
   	If();
   	If(ExpAst*, StmtAst*, StmtAst*);
@@ -149,9 +147,9 @@ public:
 
 
 class While: public StmtAst{
-  	ExpAst*left;
-  	StmtAst*right;
 public:
+    ExpAst*left;
+    StmtAst*right;
   	void print(); void code();
  	While();
   	While(ExpAst*, StmtAst*);
@@ -159,9 +157,9 @@ public:
 
 
 class For: public StmtAst{
-  	ExpAst*first,*second,*third;
-  	StmtAst*child;
 public:
+    ExpAst*first,*second,*third;
+    StmtAst*child;
 	void print(); void code();
   	For();
   	For(ExpAst*, ExpAst*, ExpAst*, StmtAst*);
@@ -175,9 +173,9 @@ public:
 
 
 class OpBinary: public ExpAst{
-	ExpAst*left,*right;
-  	opNameB opName;
 public:
+  ExpAst*left,*right;
+    opNameB opName;
   	void print(); void code();
   	OpBinary();
   	OpBinary(ExpAst*, ExpAst*, opNameB);
@@ -185,9 +183,9 @@ public:
 };
 
 class OpUnary: public ExpAst{
-	ExpAst* child;
-  opNameU opName;
 public:
+  ExpAst* child;
+  opNameU opName;
   	void print(); void code();
   	OpUnary();
   	OpUnary(ExpAst*, OpUnary*);
@@ -196,9 +194,9 @@ public:
 };
 
 class Assign: public ExpAst{
-  	ExpAst*left;
-  	ExpAst*right;
 public:
+    ExpAst*left;
+    ExpAst*right;
   	void print(); void code();
   	Assign();
   	Assign(ExpAst*, ExpAst*);
@@ -214,31 +212,31 @@ public:
 };
 
 class FloatConst: public ExpAst{
-	float child;
 public:
+  float child;
   	void print(); void code();
   	FloatConst();
   	FloatConst(float child);
 };
 
 class IntConst: public ExpAst{
-	int child;
 public:
+  int child;
   	void print(); void code();
   	IntConst();
   	IntConst(int child);
 };
 
 class StringConst: public ExpAst{
-	std::string child;
 public:
+  std::string child;
   	void print(); void code();
   	StringConst();
   	StringConst(std::string child);
 };
 class Pointer: public RefAst{
-	RefAst*child;
 public:
+  RefAst*child;
 	void print(); void code();
 	Pointer();
 	Pointer(RefAst*);
@@ -248,8 +246,8 @@ public:
 ////////////////////////////////////////////////////////
 
 class Identifier: public RefAst{
-	std::string  child;
 public:
+    std::string  child;
   	void print(); void code();
   	Identifier();
   	Identifier(std::string child);
@@ -257,17 +255,17 @@ public:
 
 
 class Member: public RefAst{
-  	ExpAst*left;
-  	Identifier*right;
 public:
+    ExpAst*left;
+    Identifier*right;
   	void print(); void code();
  	  Member();
   	Member(ExpAst*, Identifier*);
 };
 class Arrow: public RefAst{
-  	ExpAst*left;
-  	Identifier*right;
 public:
+    ExpAst*left;
+    Identifier*right;
   	void print(); void code();
  	Arrow();
   	Arrow(ExpAst*, Identifier*);
@@ -276,9 +274,9 @@ public:
 
 
 class ArrayRef: public RefAst{
-	ExpAst*left;
-  	ExpAst* right;
 public:
+  ExpAst*left;
+    ExpAst* right;
   	void print(); void code();
   	ArrayRef();
   	ArrayRef(ExpAst* left, ExpAst* right);
@@ -286,8 +284,8 @@ public:
 
 
 class DeRef: public RefAst{
-	RefAst*child;
 public:
+  RefAst*child;
 	void print(); void code();
 	DeRef();
 	DeRef(RefAst*);

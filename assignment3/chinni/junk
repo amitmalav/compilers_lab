@@ -4,6 +4,14 @@
 
 
 
+f:
+addi $sp, $sp, -4
+lw $ra, 0($sp)
+addi $sp, $sp, -4
+sw $fp, 0($sp)
+move $fp, $sp
+addi $sp, $sp, -4
+
 
 
 
