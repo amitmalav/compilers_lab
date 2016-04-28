@@ -1,62 +1,4 @@
-(Block [(Assign (Id "s") (PLUS_INT (Id "a") (Id "b")))])
-
-
-
-
-
-1
-f:
-addi $sp, $sp, -4
-addi $t1, $fp, -4
-sw $t1, 0($sp)
-
-addi $sp, $sp, -4
-addi $t1, $fp, 8
-lw $t1, 0($t1)
-sw $t1, 0($sp)
-
-addi $sp, $sp, -4
-addi $t1, $fp, 12
-lw $t1, 0($t1)
-sw $t1, 0($sp)
-
-lw $t1, 0($sp)
-lw $t2, 4($sp)
-add $t1, $t1, $t2
-addi $sp, $sp, 8
-addi $sp, $sp, -4
-sw $t1, 0($sp)
-
-lw $t1, 0($sp)
-lw $t2, 4($sp)
-sw $t1, 0($t2)
-addi $sp, $sp, 8
-addi $sp, $sp, -4
-sw $t1, 0($sp)
-
-
-
-
-
-
-
-(Block [(Funcall (Id "f") (IntConst 1) (IntConst 2))])
-
-
-
-
-
-2
-main:
-addi $sp, $sp, -4
-addi $t1, $0, 1
-sw $t1, 0($sp)
-addi $sp, $sp, -4
-addi $t1, $0, 2
-sw $t1, 0($sp)
-addi $sp, $sp, -4
-sw $fp, 0($sp)
-jal f
+(Block [])
 
 
 
@@ -67,12 +9,16 @@ jal f
 
 
 
-Function: f		void		-1
-Function para: a		int		4		4
-Function para: b		int		4		8
-Local vars: s		int		4		-4
 
 
-Function: main		int		-1
+
+
+
+Function: f		int		4
+Function para: a		int		4		0
+Function para: b		int		4		4
+Function para: c		array(array(int, 2), 3)		24		8
+Function para: e		int		4		32
+Local vars: d		int		4		-4
 
 

@@ -194,8 +194,8 @@ parameter_declaration
 				}
 			}
 
-			offset += ptable->size();
 			ptable->offset = offset;
+			offset += ptable->size();
 			paddr += 1; 
 			paraMap[ptable->name] = $3;
 		}

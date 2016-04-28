@@ -263,7 +263,14 @@ int SymbolTable::size(){
 		}
 		return ssize;		
 	}
-	else return -1;
+	else{
+		if(retType->typeKind == Pointer)return 4;
+		else if(retType->typeKind == Base){
+			if(retType->base == Int || retType->base == Float)return 4;
+			else return 0;
+		}
+		else return 0;
+	}
 };
 
 bool SymbolTable::checkScope(string var){

@@ -1,8 +1,4 @@
-
-void f(int a, int b) {
-	int s;
-    s = a + b;
-}
-int main(){
-	f(1, 2);
+int f(int a, int b, int c[2][3], int e){
+	int d;
+	;
 }

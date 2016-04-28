@@ -842,35 +842,50 @@ void Identifier::code(){
 	// cout << child << "  " << this->is_left << endl;
 	map <string, SymbolTableEntry*>::iterator pit = stable->parameters.find(child);
 	if(pit != stable->parameters.end()){
-		int tmp = 4 + pit->second->offset;
-		if(this->is_left == 0){
-			cout << "addi $sp, $sp, -4" << endl <<
+		// int tmp = 4 + pit->second->offset;
+		// if(this->is_left == 0){
+		// 	cout << "addi $sp, $sp, -4" << endl <<
+		// 		"addi $t1, $fp, "<< tmp << endl <<
+		// 		"lw $t1, 0($t1)" << endl <<
+		// 		"sw $t1, 0($sp)" << endl<<endl;
+		// }
+		// else{
+		// 	cout << "addi $sp, $sp, -4" << endl <<
+		// 			"addi $t1, $fp, "<< tmp << endl <<
+		// 			"sw $t1, 0($sp)" << endl<<endl;
+		// 	}
+		// return;
+		int tmp = -4 + pit->second->offset;
+		cout << "addi $sp, $sp, -4" << endl <<
 				"addi $t1, $fp, "<< tmp << endl <<
-				"lw $t1, 0($t1)" << endl <<
 				"sw $t1, 0($sp)" << endl<<endl;
-		}
-		else{
-			cout << "addi $sp, $sp, -4" << endl <<
-					"addi $t1, $fp, "<< tmp << endl <<
-					"sw $t1, 0($sp)" << endl<<endl;
-			}
 		return;
+
+
+
 	}
 	pit = stable->localvars.find(child);
 	if(pit != stable->localvars.end()){
-		int tmp = pit->second->offset;
-		if(this->is_left == 0){
-			cout << "addi $sp, $sp, -4" << endl <<
-					"addi $t1, $fp, " << tmp << endl <<
-					"lw $t1, 0($t1)" << endl <<
-					"sw $t1, 0($sp)" << endl<<endl;
-		}
-		else{
-			cout << "addi $sp, $sp, -4" << endl <<
-					"addi $t1, $fp, " << tmp << endl <<
-					"sw $t1, 0($sp)" << endl<<endl;
-		}
+		// int tmp = pit->second->offset;
+		// if(this->is_left == 0){
+		// 	cout << "addi $sp, $sp, -4" << endl <<
+		// 			"addi $t1, $fp, " << tmp << endl <<
+		// 			"lw $t1, 0($t1)" << endl <<
+		// 			"sw $t1, 0($sp)" << endl<<endl;
+		// }
+		// else{
+		// 	cout << "addi $sp, $sp, -4" << endl <<
+		// 			"addi $t1, $fp, " << tmp << endl <<
+		// 			"sw $t1, 0($sp)" << endl<<endl;
+		// }
+		// return;\
+
+		int tmp = -4 + pit->second->offset;
+		cout << "addi $sp, $sp, -4" << endl <<
+				"addi $t1, $fp, "<< tmp << endl <<
+				"sw $t1, 0($sp)" << endl<<endl;
 		return;
+
 	}
 }
 void Identifier::print(){

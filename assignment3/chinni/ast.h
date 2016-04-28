@@ -52,6 +52,7 @@ enum opNameU{
 class abstract_astnode{
 public:
   Type* type;
+  int addr;
   virtual void print () = 0;
   virtual void code () = 0;
   
